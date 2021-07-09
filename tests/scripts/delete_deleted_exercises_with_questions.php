@@ -5,9 +5,15 @@ exit;
 
 require_once __DIR__ . '/../../main/inc/global.inc.php';
 
+<<<<<<< HEAD
+$sql = 'SELECT iid, c_id, title 
+        FROM c_quiz 
+        WHERE active = -1 
+=======
 $sql = 'SELECT iid, c_id, title
         FROM c_quiz
         WHERE active = -1
+>>>>>>> master
         ORDER BY iid';
 
 $result = Database::query($sql);
@@ -24,9 +30,15 @@ foreach ($data as $row) {
 
     $courseInfo = api_get_course_info_by_id($row['c_id']);
 
+<<<<<<< HEAD
+    $sql = "SELECT question_id, c_id 
+            FROM c_quiz_rel_question
+            WHERE exercice_id = $id
+=======
     $sql = "SELECT question_id, c_id
             FROM c_quiz_rel_question
             WHERE quiz_id = $id
+>>>>>>> master
             ORDER BY iid";
     $result = Database::query($sql);
     $questions = Database::store_result($result);
@@ -41,9 +53,15 @@ foreach ($data as $row) {
         foreach ($questions as $questionData) {
             $questionId = $questionData['question_id'];
             // Check if question is used in another exercise:
+<<<<<<< HEAD
+            $sql = "SELECT count(iid) 
+                    FROM c_quiz_rel_question
+                    WHERE exercice_id != $id AND question_id = $questionId";
+=======
             $sql = "SELECT count(iid)
                     FROM c_quiz_rel_question
                     WHERE quiz_id != $id AND question_id = $questionId";
+>>>>>>> master
             $result = Database::query($sql);
             $dataQuestion = Database::fetch_array($result);
 
@@ -64,4 +82,8 @@ foreach ($data as $row) {
 
     $sql = "DELETE FROM c_item_property WHERE ref = $id AND c_id = $courseId and tool = 'quiz' ";
     $result = Database::query($sql);
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> master

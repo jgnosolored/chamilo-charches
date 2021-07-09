@@ -2,19 +2,21 @@
 /* For license terms, see /license.txt */
 /**
  * Configuration script for the Buy Courses plugin.
+ *
+ * @package chamilo.plugin.buycourses
  */
 $cidReset = true;
 
 require_once __DIR__.'/../../../main/inc/global.inc.php';
 
 $plugin = BuyCoursesPlugin::create();
-$includeSession = 'true' === $plugin->get('include_sessions');
-$includeServices = 'true' === $plugin->get('include_services');
+$includeSession = $plugin->get('include_sessions') === 'true';
+$includeServices = $plugin->get('include_services') === 'true';
 if (!$includeServices) {
     api_not_allowed(true);
 }
 
-$taxEnable = 'true' === $plugin->get('tax_enable');
+$taxEnable = $plugin->get('tax_enable') === 'true';
 
 api_protect_admin_script(true);
 
@@ -33,8 +35,7 @@ $services = $plugin->getServices($first, $pageSize);
 $totalItems = $plugin->getServices(null, null, 'count');
 $pagesCount = ceil($totalItems / $pageSize);
 
-$url = api_get_self().'?';
-$pagination = Display::getPagination($url, $currentPage, $pagesCount, $totalItems);
+$pagination = BuyCoursesPlugin::returnPagination(api_get_self(), $currentPage, $pagesCount, $totalItems);
 
 // breadcrumbs
 $interbreadcrumb[] = [
@@ -43,6 +44,8 @@ $interbreadcrumb[] = [
 ];
 
 $templateName = $plugin->get_lang('AvailableCourses');
+
+$htmlHeadXtra[] = api_get_css(api_get_path(WEB_PLUGIN_PATH).'buycourses/resources/css/style.css');
 
 $tpl = new Template($templateName);
 

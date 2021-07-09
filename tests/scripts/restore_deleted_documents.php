@@ -1,15 +1,26 @@
 <?php
+<<<<<<< HEAD
+
+=======
+>>>>>>> master
 /* For licensing terms, see /license.txt */
 
 /**
  * Script to restore some deleted documents
  */
 
+<<<<<<< HEAD
+exit;
+use Chamilo\CourseBundle\Entity\CDocument;
+use Chamilo\CourseBundle\Entity\CItemProperty;
+
+=======
 use Chamilo\CourseBundle\Entity\CDocument;
 use Chamilo\CourseBundle\Entity\CItemProperty;
 
 exit;
 
+>>>>>>> master
 require __DIR__.'/../../main/inc/global.inc.php';
 
 api_protect_admin_script();

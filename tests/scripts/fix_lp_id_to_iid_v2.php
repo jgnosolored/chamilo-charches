@@ -1,4 +1,8 @@
 <?php
+<<<<<<< HEAD
+
+=======
+>>>>>>> master
 /* For licensing terms, see /license.txt */
 
 /**

@@ -1,12 +1,5 @@
 <?php
-
 /* For licensing terms, see /license.txt */
-
-namespace Chamilo\CoreBundle\Hook;
-
-use Chamilo\CoreBundle\Hook\Interfaces\HookCreateCourseEventInterface;
-use Chamilo\CoreBundle\Hook\Interfaces\HookCreateCourseObserverInterface;
-use Doctrine\ORM\EntityManager;
 
 /**
  * Class HookCreateCourse.
@@ -15,10 +8,12 @@ class HookCreateCourse extends HookEvent implements HookCreateCourseEventInterfa
 {
     /**
      * HookCreateCourse constructor.
+     *
+     * @throws Exception
      */
-    protected function __construct(EntityManager $entityManager)
+    protected function __construct()
     {
-        parent::__construct('HookCreateCourse', $entityManager);
+        parent::__construct('HookCreateCourse');
     }
 
     /**

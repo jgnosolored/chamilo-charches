@@ -13,9 +13,16 @@ Feature: Profile page
     And wait for the page to be loaded
     And I press "update_profile"
     And wait for the page to be loaded
+<<<<<<< HEAD
+    Then I should see "Your new profile has been saved"
+    Then I am on "/main/social/home.php"
+    And I should see "Andrew"
+    Then I am on "/main/auth/profile.php"
+=======
     Then I should see "Updated"
     And I should see "Andrew"
     Then I follow "Edit profile"
+>>>>>>> master
     Then I fill in the following:
       | profile_firstname | Andrea |
     And I press "update_profile"

@@ -2,7 +2,10 @@
 /* For license terms, see /license.txt */
 /**
  * Configuration script for the Buy Courses plugin.
+ *
+ * @package chamilo.plugin.buycourses
  */
+
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 $cidReset = true;
@@ -10,9 +13,9 @@ $cidReset = true;
 require_once __DIR__.'/../../../main/inc/global.inc.php';
 
 $plugin = BuyCoursesPlugin::create();
-$includeSession = 'true' === $plugin->get('include_sessions');
-$includeServices = 'true' === $plugin->get('include_services');
-$taxEnable = 'true' === $plugin->get('tax_enable');
+$includeSession = $plugin->get('include_sessions') === 'true';
+$includeServices = $plugin->get('include_services') === 'true';
+$taxEnable = $plugin->get('tax_enable') === 'true';
 
 api_protect_admin_script(true);
 
@@ -34,7 +37,7 @@ $courses = new Paginator($query, $fetchJoinCollection = true);
 foreach ($courses as $course) {
     $item = $plugin->getItemByProduct($course->getId(), BuyCoursesPlugin::PRODUCT_TYPE_COURSE);
     $course->buyCourseData = [];
-    if (false !== $item) {
+    if ($item !== false) {
         $course->buyCourseData = $item;
     }
 }
@@ -42,8 +45,13 @@ foreach ($courses as $course) {
 $totalItems = count($courses);
 $pagesCount = ceil($totalItems / $pageSize);
 
-$url = api_get_self().'?type='.$type;
-$pagination = Display::getPagination($url, $currentPage, $pagesCount, $totalItems);
+$pagination = BuyCoursesPlugin::returnPagination(
+    api_get_self(),
+    $currentPage,
+    $pagesCount,
+    $totalItems,
+    ['type' => $type]
+);
 
 // breadcrumbs
 $interbreadcrumb[] = [
@@ -52,6 +60,8 @@ $interbreadcrumb[] = [
 ];
 
 $templateName = $plugin->get_lang('AvailableCourses');
+
+$htmlHeadXtra[] = api_get_css(api_get_path(WEB_PLUGIN_PATH).'buycourses/resources/css/style.css');
 
 $tpl = new Template($templateName);
 

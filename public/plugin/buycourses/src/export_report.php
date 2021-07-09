@@ -21,7 +21,7 @@ if ($form->validate()) {
     $dateStart = $reportValues['date_start'];
     $dateEnd = $reportValues['date_end'];
 
-    if (null == $dateStart || null == $dateEnd) {
+    if ($dateStart == null || $dateEnd == null) {
         Display::addFlash(
             Display::return_message($plugin->get_lang('SelectDateRange'), 'error', false)
         );

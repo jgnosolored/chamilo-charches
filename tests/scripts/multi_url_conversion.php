@@ -1,12 +1,22 @@
 <?php
+<<<<<<< HEAD
+
+/* For licensing terms, see /license.txt */
+
+=======
 // For licensing terms, see /license.txt
+>>>>>>> master
 /**
  * This script takes a single-URL portal and changes the database so the
  * original portal becomes a secondary URL (not the main admin URL).
  * This means creating a new URL of ID 1 and moving all previous records
  * referencing ID 1 to ID 2.
  */
+<<<<<<< HEAD
+exit;
+=======
 die();
+>>>>>>> master
 require __DIR__.'/../../main/inc/global.inc.php';
 
 $tableAccessUrl = Database::get_main_table(TABLE_MAIN_ACCESS_URL);
@@ -19,6 +29,15 @@ $tableAccessUrlRelCourseCategory = Database::get_main_table(TABLE_MAIN_ACCESS_UR
 $tableAccessUrlRelSession = Database::get_main_table(TABLE_MAIN_ACCESS_URL_REL_SESSION);
 $tableAccessUrlRelUser = Database::get_main_table(TABLE_MAIN_ACCESS_URL_REL_USER);
 $tableAccessUrlRelUserGroup = Database::get_main_table(TABLE_MAIN_ACCESS_URL_REL_USERGROUP);
+<<<<<<< HEAD
+$tableBranchSync = Database::get_main_table(TABLE_BRANCH);
+$tableMailTemplate = 'mail_template'; //does not necessarily exist //url_id field
+$tableSessionCategory = Database::get_main_table(TABLE_MAIN_SESSION_CATEGORY);
+$tableCalendar = Database::get_main_table(TABLE_MAIN_SYSTEM_CALENDAR);
+$tableTrackCourseRanking = Database::get_main_table(TABLE_STATISTIC_TRACK_COURSE_RANKING); //url_id
+
+=======
+>>>>>>> master
 
 // Usage
 echo "This script converts a single-URL portal to a multi-URL portal by making".PHP_EOL;
@@ -119,5 +138,26 @@ $sqlU = "UPDATE $tableAccessUrlRelUserGroup SET access_url_id = $oldUrlId WHERE 
 $resU = Database::query($sqlU);
 echo "Table $tableAccessUrlRelUserGroup updated".PHP_EOL;
 
+<<<<<<< HEAD
+$sqlU = "UPDATE $tableBranchSync SET access_url_id = $oldUrlId WHERE access_url_id = $adminUrlId";
+$resU = Database::query($sqlU);
+
+// only if mail_template table exists
+//$sqlU = "UPDATE $tableMailTemplate SET url_id = $oldUrlId WHERE url_id = $adminUrlId";
+//$resU = Database::query($sqlU);
+
+$sqlU = "UPDATE $tableSessionCategory SET access_url_id = $oldUrlId WHERE access_url_id = $adminUrlId";
+$resU = Database::query($sqlU);
+
+$sqlU = "UPDATE $tableCalendar SET access_url_id = $oldUrlId WHERE access_url_id = $adminUrlId";
+$resU = Database::query($sqlU);
+
+$sqlU = "UPDATE $tableTrackCourseRanking SET url_id = $oldUrlId WHERE url_id = $adminUrlId";
+$resU = Database::query($sqlU);
+
 echo "Database updated.".PHP_EOL;
 echo "Please set \$_configuration['multiple_access_urls'] to true in the app/config/configuration.php file".PHP_EOL;
+=======
+echo "Database updated.".PHP_EOL;
+echo "Please set \$_configuration['multiple_access_urls'] to true in the app/config/configuration.php file".PHP_EOL;
+>>>>>>> master

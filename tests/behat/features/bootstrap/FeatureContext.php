@@ -21,7 +21,15 @@ class FeatureContext extends MinkContext
      */
     public function iAmAPlatformAdministrator()
     {
+<<<<<<< HEAD
+        $this->iAmOnHomepage();
+        $this->fillField('login', 'admin');
+        $this->fillField('password', 'admin');
+        $this->pressButton('submitAuth');
+        $this->getSession()->back();
+=======
         $this->iAmLoggedAs('admin');
+>>>>>>> master
     }
 
     /**
@@ -29,7 +37,14 @@ class FeatureContext extends MinkContext
      */
     public function iAmATeacher()
     {
+<<<<<<< HEAD
+        $this->iAmOnHomepage();
+        $this->fillField('login', 'mmosquera');
+        $this->fillField('password', 'mmosquera');
+        $this->pressButton('submitAuth');
+=======
         $this->iAmLoggedAs('mmosquera');
+>>>>>>> master
     }
 
     /**
@@ -37,7 +52,14 @@ class FeatureContext extends MinkContext
      */
     public function iAmAStudent()
     {
+<<<<<<< HEAD
+        $this->iAmOnHomepage();
+        $this->fillField('login', 'acostea');
+        $this->fillField('password', 'acostea');
+        $this->pressButton('submitAuth');
+=======
         $this->iAmLoggedAs('acostea');
+>>>>>>> master
     }
 
     /**
@@ -45,7 +67,14 @@ class FeatureContext extends MinkContext
      */
     public function iAmAnHR()
     {
+<<<<<<< HEAD
+        $this->iAmOnHomepage();
+        $this->fillField('login', 'ptook');
+        $this->fillField('password', 'ptook');
+        $this->pressButton('submitAuth');
+=======
         $this->iAmLoggedAs('ptook');
+>>>>>>> master
     }
 
     /**
@@ -53,7 +82,14 @@ class FeatureContext extends MinkContext
      */
     public function iAmAStudentBoss()
     {
+<<<<<<< HEAD
+        $this->iAmOnHomepage();
+        $this->fillField('login', 'abaggins');
+        $this->fillField('password', 'abaggins');
+        $this->pressButton('submitAuth');
+=======
         $this->iAmLoggedAs('abaggins');
+>>>>>>> master
     }
 
     /**
@@ -61,7 +97,14 @@ class FeatureContext extends MinkContext
      */
     public function iAmAnInvitee()
     {
+<<<<<<< HEAD
+        $this->iAmOnHomepage();
+        $this->fillField('login', 'bproudfoot');
+        $this->fillField('password', 'bproudfoot');
+        $this->pressButton('submitAuth');
+=======
         $this->iAmLoggedAs('bproudfoot');
+>>>>>>> master
     }
 
     /**
@@ -69,12 +112,17 @@ class FeatureContext extends MinkContext
      */
     public function courseExists($argument)
     {
+<<<<<<< HEAD
+=======
         $this->iAmAPlatformAdministrator();
+>>>>>>> master
         $this->visit('/main/admin/course_list.php?keyword='.$argument);
         $this->assertPageContainsText($argument);
     }
 
     /**
+<<<<<<< HEAD
+=======
      * @Given /^course "([^"]*)" is deleted$/
      */
     public function courseIsDeleted($argument)
@@ -85,6 +133,7 @@ class FeatureContext extends MinkContext
     }
 
     /**
+>>>>>>> master
      * @Given /^I am on course "([^"]*)" homepage$/
      */
     public function iAmOnCourseXHomepage($courseCode)
@@ -119,6 +168,19 @@ class FeatureContext extends MinkContext
      */
     public function iAmLoggedAs($username)
     {
+<<<<<<< HEAD
+        $this->visit('/index.php?logout=logout');
+        $this->iAmOnHomepage();
+        $this->fillFields(
+            new TableNode(
+                [
+                    ['login', $username],
+                    ['password', $username],
+                ]
+            )
+        );
+        $this->pressButton('submitAuth');
+=======
         //$this->visit('/logout');
         $this->visit('/login');
         $this->fillField('login', $username);
@@ -138,6 +200,7 @@ class FeatureContext extends MinkContext
         $this->assertSession()->pageTextNotContains('Internal server error');
         $this->assertSession()->pageTextNotContains('error');
         $this->assertSession()->elementNotExists('css', '.alert-danger');
+>>>>>>> master
     }
 
     /**
@@ -166,10 +229,12 @@ class FeatureContext extends MinkContext
                 ]
             );
 
+        $this->visit('/index.php?logout=logout');
         $this->iAmAPlatformAdministrator();
         $this->visit($sendInvitationURL);
         $this->iAmLoggedAs($friendUsername);
         $this->visit($acceptInvitationURL);
+        $this->visit('/index.php?logout=logout');
         $this->iAmAPlatformAdministrator();
     }
 
@@ -222,7 +287,6 @@ class FeatureContext extends MinkContext
      */
     public function adminTopBarIsDisabled()
     {
-        $this->iAmAPlatformAdministrator();
         $this->visit('/main/admin/settings.php');
         $this->fillField('search_field', 'show_admin_toolbar');
         $this->pressButton('submit_button');
@@ -235,7 +299,6 @@ class FeatureContext extends MinkContext
      */
     public function adminTopBarIsEnabled()
     {
-        $this->iAmAPlatformAdministrator();
         $this->visit('/main/admin/settings.php');
         $this->fillField('search_field', 'show_admin_toolbar');
         $this->pressButton('submit_button');
@@ -318,6 +381,24 @@ class FeatureContext extends MinkContext
     {
         // Just in case wait that ckeditor is loaded
         $this->getSession()->wait(2000);
+        $this->getSession()->executeScript(
+            "
+                var textarea = $('textarea');
+                var id = textarea.attr('id');
+                CKEDITOR.instances[id].setData(\"$value\");
+                "
+        );
+    }
+
+    /**
+     * @Then /^I fill the only ckeditor in the page with "([^"]*)"$/
+     */
+    public function iFillTheOnlyEditorInThePage($value)
+    {
+        // Just in case wait that ckeditor is loaded
+        $this->getSession()->wait(2000);
+
+
         $this->getSession()->executeScript(
             "
                 var textarea = $('textarea');
@@ -446,11 +527,19 @@ class FeatureContext extends MinkContext
     }
 
     /**
+<<<<<<< HEAD
+     * @When /^wait for the page to be loaded$/
+     */
+    public function waitForThePageToBeLoaded()
+    {
+        $this->getSession()->wait(2000);
+=======
      * @When /^(?:|I )wait for the page to be loaded$/
      */
     public function waitForThePageToBeLoaded()
     {
         $this->getSession()->wait(4000);
+>>>>>>> master
     }
 
     /**
@@ -459,6 +548,9 @@ class FeatureContext extends MinkContext
     public function waitVeryLongForThePageToBeLoaded()
     {
         //$this->getSession()->wait(10000, "document.readyState === 'complete'");
+<<<<<<< HEAD
+        $this->getSession()->wait(4000);
+=======
         $this->getSession()->wait(8000);
     }
 
@@ -468,6 +560,7 @@ class FeatureContext extends MinkContext
     public function waitVeryLongForThePageToBeLoadedWhenReady()
     {
         $this->getSession()->wait(9000, "document.readyState === 'complete'");
+>>>>>>> master
     }
 
     /**
@@ -569,11 +662,19 @@ class FeatureContext extends MinkContext
         return false;
     }
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> master
     /**
      * @Then /^I save current URL with name "([^"]*)"$/
      */
     public function saveUrlWithName($name)
     {
+<<<<<<< HEAD
+
+=======
+>>>>>>> master
         $url = $this->getSession()->getCurrentUrl();
         $this->getSession()->setCookie($name, $url);
     }
@@ -592,6 +693,12 @@ class FeatureContext extends MinkContext
     }
 
     /**
+<<<<<<< HEAD
+     * Example: Then I should see the table "#category_results":
+     *               | Categories    | Absolute score | Relative score |
+     *               | Categoryname2 | 50 / 70        | 71.43 %         |
+     *               | Categoryname1 | 60 / 60        | 100 %           |
+=======
      * @Given /^I am a student subscribed to session "([^"]*)"$/
      *
      * @param string$sessionName
@@ -620,6 +727,7 @@ class FeatureContext extends MinkContext
      *               | Categories    | Absolute score | Relative score |
      *               | Categoryname2 | 50 / 70        | 71.43%         |
      *               | Categoryname1 | 60 / 60        | 100%           |
+>>>>>>> master
      *
      * @Then /^I should see the table "([^"]*)":$/
      *

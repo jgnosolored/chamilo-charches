@@ -8,7 +8,7 @@ use Chamilo\CoreBundle\Entity\Course;
 use Chamilo\CoreBundle\Entity\CourseRelUser;
 use Chamilo\CoreBundle\Entity\Session;
 use Chamilo\CoreBundle\Entity\SessionRelCourseRelUser;
-use Chamilo\CourseBundle\Entity\CGroup;
+use Chamilo\CourseBundle\Entity\CGroupInfo;
 use Chamilo\PluginBundle\Zoom\API\MeetingInfoGet;
 use Chamilo\PluginBundle\Zoom\API\MeetingListItem;
 use Chamilo\PluginBundle\Zoom\API\MeetingSettings;
@@ -20,7 +20,6 @@ use DateTimeZone;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Exception;
-use ZoomPlugin;
 
 /**
  * Class Meeting.
@@ -85,8 +84,8 @@ class Meeting
     protected $course;
 
     /**
-     * @var CGroup
-     * @ORM\ManyToOne(targetEntity="CGroup")
+     * @var CGroupInfo
+     * @ORM\ManyToOne(targetEntity="Chamilo\CourseBundle\Entity\CGroupInfo")
      * @ORM\JoinColumn(name="group_id", referencedColumnName="iid", nullable=true)
      */
     protected $group;
@@ -338,7 +337,7 @@ class Meeting
     }
 
     /**
-     * @return CGroup
+     * @return CGroupInfo
      */
     public function getGroup()
     {
@@ -346,7 +345,7 @@ class Meeting
     }
 
     /**
-     * @param CGroup $group
+     * @param CGroupInfo $group
      *
      * @return Meeting
      */
@@ -454,7 +453,7 @@ class Meeting
             }
         } else {
             if (null !== $this->course) {
-                $subscriptions = $this->session->getSessionRelCourseRelUsersByStatus($this->course, Session::STUDENT);
+                $subscriptions = $this->session->getUserCourseSubscriptionsByStatus($this->course, Session::STUDENT);
                 if ($subscriptions) {
                     /** @var SessionRelCourseRelUser $sessionCourseUser */
                     foreach ($subscriptions as $sessionCourseUser) {
@@ -498,7 +497,7 @@ class Meeting
      */
     public function hasCloudAutoRecordingEnabled()
     {
-        return ZoomPlugin::RECORDING_TYPE_NONE !== $this->meetingInfoGet->settings->auto_recording;
+        return \ZoomPlugin::RECORDING_TYPE_NONE !== $this->meetingInfoGet->settings->auto_recording;
     }
 
     /**
@@ -569,7 +568,7 @@ class Meeting
      */
     private function initializeDisplayableProperties()
     {
-        $zoomPlugin = new ZoomPlugin();
+        $zoomPlugin = new \ZoomPlugin();
 
         $typeList = [
             API\Meeting::TYPE_INSTANT => $zoomPlugin->get_lang('InstantMeeting'),
@@ -593,7 +592,7 @@ class Meeting
         $this->formattedDuration = '';
         if (!empty($this->meetingInfoGet->start_time)) {
             $this->startDateTime = new DateTime($this->meetingInfoGet->start_time);
-            $this->startDateTime->setTimezone(new DateTimeZone(date_default_timezone_get()));
+            $this->startDateTime->setTimezone(new DateTimeZone(api_get_timezone()));
             $this->formattedStartTime = $this->startDateTime->format('Y-m-d H:i');
         }
 

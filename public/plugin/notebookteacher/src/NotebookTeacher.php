@@ -1,5 +1,4 @@
 <?php
-
 /* For licensing terms, see /license.txt */
 
 use ChamiloSession as Session;
@@ -11,6 +10,8 @@ use ChamiloSession as Session;
  * @author Carlos Vargas <litox84@gmail.com>, move code of main/notebook up here
  * @author Jose Angel Ruiz <desarrollo@nosolored.com>, adaptation for the plugin
  * @author Julio Montoya
+ *
+ * @package chamilo.library
  */
 class NotebookTeacher
 {
@@ -32,15 +33,15 @@ class NotebookTeacher
      */
     public static function javascriptNotebook()
     {
-        return '<script>
+        return "<script>
 				function confirmation (name)
 				{
-					if (confirm(" '.get_lang('Are you sure you want to delete this note').' "+ name + " ?"))
+					if (confirm(\" ".get_lang("NoteConfirmDelete")." \"+ name + \" ?\"))
 						{return true;}
 					else
 						{return false;}
 				}
-				</script>';
+				</script>";
     }
 
     /**
@@ -71,7 +72,7 @@ class NotebookTeacher
             'c_id' => $courseId,
             'session_id' => $sessionId,
             'user_id' => $userId,
-            'student_id' => (int) ($values['student_id']),
+            'student_id' => intval($values['student_id']),
             'course' => $courseCode,
             'title' => $values['note_title'],
             'description' => $values['note_comment'],
@@ -108,9 +109,9 @@ class NotebookTeacher
                 session_id AS session_id,
                 student_id AS student_id
                FROM $tableNotebook
-               WHERE c_id = $courseId AND id = '".(int) $notebookId."' ";
+               WHERE c_id = $courseId AND id = '".intval($notebookId)."' ";
         $result = Database::query($sql);
-        if (1 != Database::num_rows($result)) {
+        if (Database::num_rows($result) != 1) {
             return [];
         }
 
@@ -138,7 +139,7 @@ class NotebookTeacher
 
         $params = [
             'user_id' => api_get_user_id(),
-            'student_id' => (int) ($values['student_id']),
+            'student_id' => intval($values['student_id']),
             'course' => api_get_course_id(),
             'session_id' => $sessionId,
             'title' => $values['note_title'],
@@ -167,7 +168,7 @@ class NotebookTeacher
      */
     public static function deleteNote($notebookId)
     {
-        if (empty($notebookId) || $notebookId != (string) ((int) $notebookId)) {
+        if (empty($notebookId) || $notebookId != strval(intval($notebookId))) {
             return false;
         }
 
@@ -178,11 +179,11 @@ class NotebookTeacher
         $sql = "DELETE FROM $tableNotebook
                 WHERE
                     c_id = $courseId AND
-                    id = '".(int) $notebookId."' AND
+                    id = '".intval($notebookId)."' AND
                     user_id = '".api_get_user_id()."'";
         $result = Database::query($sql);
 
-        if (1 != Database::affected_rows($result)) {
+        if (Database::affected_rows($result) != 1) {
             return false;
         }
 
@@ -202,7 +203,7 @@ class NotebookTeacher
         if (!isset($_GET['direction'])) {
             $sortDirection = 'ASC';
             $linkSortDirection = 'DESC';
-        } elseif ('ASC' == $_GET['direction']) {
+        } elseif ($_GET['direction'] == 'ASC') {
             $sortDirection = 'ASC';
             $linkSortDirection = 'DESC';
         }
@@ -235,7 +236,7 @@ class NotebookTeacher
 
         // Status
         $students = [];
-        $students[] = $plugin->get_lang('AllLearner');
+        $students[] = $plugin->get_lang('AllStudent');
         foreach ($userList as $key => $userItem) {
             $students[$key] = api_get_person_name($userItem['firstname'], $userItem['lastname']);
         }
@@ -243,7 +244,7 @@ class NotebookTeacher
         $form->addElement(
             'select',
             'student_filter',
-            $plugin->get_lang('LearnerFilter'),
+            $plugin->get_lang('StudentFilter'),
             $students,
             [
                 'id' => 'student_filter',
@@ -263,29 +264,29 @@ class NotebookTeacher
                     echo '<a href="'.$currentUrl.'&action=addnote">'.
                         Display::return_icon(
                             'new_note.png',
-                            get_lang('Add new note in my personal notebook'),
+                            get_lang('NoteAddNew'),
                             '',
                             '32'
                         ).'</a>';
                 } elseif (api_is_allowed_to_session_edit(false, true)) {
                     echo '<a href="'.$currentUrl.'&action=addnote">'.
-                        Display::return_icon('new_note.png', get_lang('Add new note in my personal notebook'), '', '32').'</a>';
+                        Display::return_icon('new_note.png', get_lang('NoteAddNew'), '', '32').'</a>';
                 }
             } else {
                 echo '<a href="javascript:void(0)">'.
-                    Display::return_icon('new_note.png', get_lang('Add new note in my personal notebook'), '', '32').'</a>';
+                    Display::return_icon('new_note.png', get_lang('NoteAddNew'), '', '32').'</a>';
             }
         }
 
         echo '<a href="'.$currentUrl.
                 '&action=changeview&view=creation_date&direction='.$linkSortDirection.'">'.
-            Display::return_icon('notes_order_by_date_new.png', get_lang('Sort by date created'), '', '32').'</a>';
+            Display::return_icon('notes_order_by_date_new.png', get_lang('OrderByCreationDate'), '', '32').'</a>';
         echo '<a href="'.$currentUrl.
                 '&action=changeview&view=update_date&direction='.$linkSortDirection.'">'.
-            Display::return_icon('notes_order_by_date_mod.png', get_lang('Sort by date last modified'), '', '32').'</a>';
+            Display::return_icon('notes_order_by_date_mod.png', get_lang('OrderByModificationDate'), '', '32').'</a>';
         echo '<a href="'.$currentUrl.
                 '&action=changeview&view=title&direction='.$linkSortDirection.'">'.
-            Display::return_icon('notes_order_by_title.png', get_lang('Sort by title'), '', '32').'</a>';
+            Display::return_icon('notes_order_by_title.png', get_lang('OrderByTitle'), '', '32').'</a>';
 
         echo '</div>';
         echo '<div class="row">'.$selectStudent.'</div>';
@@ -299,15 +300,15 @@ class NotebookTeacher
         $view = Session::read('notebook_view');
         // Database table definition
         $tableNotebook = Database::get_main_table(NotebookTeacherPlugin::TABLE_NOTEBOOKTEACHER);
-        if ('creation_date' == $view || 'update_date' == $view) {
-            $orderBy = " ORDER BY $view $sortDirection ";
+        if ($view == 'creation_date' || $view == 'update_date') {
+            $orderBy = " ORDER BY `$view` $sortDirection ";
         } else {
-            $orderBy = " ORDER BY $view $sortDirection ";
+            $orderBy = " ORDER BY `$view` $sortDirection ";
         }
 
         // condition for the session
         $conditionSession = api_get_session_condition($sessionId);
-        $condExtra = 'update_date' == $view ? " AND update_date <> ''" : ' ';
+        $condExtra = $view == 'update_date' ? " AND update_date <> ''" : " ";
 
         if ($studentId > 0) {
             // Only one student
@@ -338,13 +339,13 @@ class NotebookTeacher
                     $sessionImg = api_get_session_image($row['session_id'], $userInfo['status']);
                     $updateValue = '';
                     if ($row['update_date'] != $row['creation_date']) {
-                        $updateValue = ', '.get_lang('Updated').': '.
+                        $updateValue = ', '.get_lang('UpdateDate').': '.
                                         Display::dateToStringAgoAndLongDate($row['update_date']);
                     }
                     $userInfo = api_get_user_info($row['user_id']);
-                    $author = ', '.get_lang('Trainer').': '.$userInfo['complete_name'];
+                    $author = ', '.get_lang('Teacher').': '.$userInfo['complete_name'];
                     $actions = '';
-                    if ((int) ($row['user_id']) == api_get_user_id()) {
+                    if (intval($row['user_id']) == api_get_user_id()) {
                         $actions = '<a href="'.
                                 api_get_self().'?'.
                                 api_get_cidreq().'&student_id='.$studentId.'&action=editnote&notebook_id='.$row['id'].'">'.
@@ -358,7 +359,7 @@ class NotebookTeacher
                     echo Display::panel(
                         $row['description'],
                         $row['title'].$sessionImg.' <div class="pull-right">'.$actions.'</div>',
-                        get_lang('Creation date').': '.
+                        get_lang('CreationDate').': '.
                         Display::dateToStringAgoAndLongDate($row['creation_date']).$updateValue.$author
                     );
                 }
@@ -389,15 +390,15 @@ class NotebookTeacher
                         $updateValue = '';
 
                         if ($row['update_date'] != $row['creation_date']) {
-                            $updateValue = ', '.get_lang('Updated').': '.
+                            $updateValue = ', '.get_lang('UpdateDate').': '.
                             Display::dateToStringAgoAndLongDate($row['update_date']);
                         }
 
                         $userInfo = api_get_user_info($row['user_id']);
-                        $author = ', '.get_lang('Trainer').': '.$userInfo['complete_name'];
+                        $author = ', '.get_lang('Teacher').': '.$userInfo['complete_name'];
 
                         $actions = '';
-                        if ((int) ($row['user_id']) == api_get_user_id()) {
+                        if (intval($row['user_id']) == api_get_user_id()) {
                             $actions = '<a href="'.api_get_self().
                                 '?action=editnote&notebook_id='.$row['id'].'&'.api_get_cidreq().'">'.
                                     Display::return_icon('edit.png', get_lang('Edit'), '', ICON_SIZE_SMALL).'</a>';
@@ -415,14 +416,14 @@ class NotebookTeacher
                         echo Display::panel(
                             $row['description'],
                             $row['title'].$sessionImg.' <div class="pull-right">'.$actions.'</div>',
-                            get_lang('Creation date').': '.
+                            get_lang('CreationDate').': '.
                             Display::dateToStringAgoAndLongDate($row['creation_date']).$updateValue.$author
                         );
                     }
                 }
             }
 
-            $conditionStudent = ' AND student_id = 0';
+            $conditionStudent = " AND student_id = 0";
 
             $sql = "SELECT * FROM $tableNotebook
                     WHERE
@@ -434,21 +435,21 @@ class NotebookTeacher
 
             $result = Database::query($sql);
             if (Database::num_rows($result) > 0) {
-                echo Display::page_subheader($plugin->get_lang('NotebookNoLearnerAssigned'));
+                echo Display::page_subheader($plugin->get_lang('NotebookNoStudentAssigned'));
                 while ($row = Database::fetch_array($result)) {
                     // Validation when belongs to a session
                     $sessionImg = api_get_session_image($row['session_id'], $userInfo['status']);
                     $updateValue = '';
 
                     if ($row['update_date'] != $row['creation_date']) {
-                        $updateValue = ', '.get_lang('Updated').': '.
+                        $updateValue = ', '.get_lang('UpdateDate').': '.
                         Display::dateToStringAgoAndLongDate($row['update_date']);
                     }
 
                     $userInfo = api_get_user_info($row['user_id']);
-                    $author = ', '.get_lang('Trainer').': '.$userInfo['complete_name'];
+                    $author = ', '.get_lang('Teacher').': '.$userInfo['complete_name'];
                     $actions = '';
-                    if ((int) ($row['user_id']) == api_get_user_id()) {
+                    if (intval($row['user_id']) == api_get_user_id()) {
                         $actions = '<a href="'.api_get_self().
                                 '?action=editnote&notebook_id='.$row['id'].'&'.api_get_cidreq().'">'.
                                 Display::return_icon('edit.png', get_lang('Edit'), '', ICON_SIZE_SMALL).'</a>';
@@ -461,7 +462,7 @@ class NotebookTeacher
                     echo Display::panel(
                         $row['description'],
                         $row['title'].$sessionImg.' <div class="pull-right">'.$actions.'</div>',
-                        get_lang('Creation date').': '.
+                        get_lang('CreationDate').': '.
                         Display::dateToStringAgoAndLongDate($row['creation_date']).$updateValue.$author
                     );
                 }
@@ -505,25 +506,25 @@ class NotebookTeacher
         $form->addElement(
             'select',
             'student_id',
-            get_lang('Learner'),
+            get_lang('Student'),
             $students
         );
 
-        $form->addElement('text', 'note_title', get_lang('Note title'), ['id' => 'note_title']);
+        $form->addElement('text', 'note_title', get_lang('NoteTitle'), ['id' => 'note_title']);
         $form->addElement(
             'html_editor',
             'note_comment',
-            get_lang('Note details'),
+            get_lang('NoteComment'),
             null,
             api_is_allowed_to_edit()
                 ? ['ToolbarSet' => 'Notebook', 'Width' => '100%', 'Height' => '300']
-                : ['ToolbarSet' => 'NotebookLearner', 'Width' => '100%', 'Height' => '300', 'UserStatus' => 'student']
+                : ['ToolbarSet' => 'NotebookStudent', 'Width' => '100%', 'Height' => '300', 'UserStatus' => 'student']
         );
 
         $form->addButtonCreate(get_lang('Save'), 'SubmitNote');
 
         // Setting the rules
-        $form->addRule('note_title', get_lang('Required field'), 'required');
+        $form->addRule('note_title', get_lang('ThisFieldIsRequired'), 'required');
 
         return $form;
     }

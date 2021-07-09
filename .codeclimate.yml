@@ -7,7 +7,11 @@ checks:
   file-lines:
     enabled: false
   method-complexity:
+<<<<<<< HEAD
+    enabled: true
+=======
     enabled: false
+>>>>>>> master
     config:
       threshold: 20
   method-count:
@@ -45,11 +49,14 @@ plugins:
         enabled: false
       Squiz Strings ConcatenationSpacing PaddingFound:
         enabled: false
+<<<<<<< HEAD
+=======
       Symfony2 Commenting FunctionComment MissingReturn:
         enabled: false
       Symfony2 Commenting FunctionComment MissingParamTag:
         enabled: false
 
+>>>>>>> master
   phpmd:
     enabled: true
     config:
@@ -66,6 +73,68 @@ plugins:
     enabled: false
 
 exclude_patterns:
+<<<<<<< HEAD
+- cli-config.php
+- app/cache/
+- app/logs/
+- app/config/
+- app/SymfonyRequirements.php
+- app/Migrations/
+- app/Resources/
+- main/admin/db.php
+- main/admin/ldap_synchro.php
+- main/auth/cas/lib/
+- main/auth/shibboleth
+- main/auth/openid
+- main/chat/emoji_strategy.php
+- main/default_course_document
+- main/document/Wami.swf
+- main/fonts/
+- main/inc/ajax/Wami.swf
+- main/inc/lib/browser/
+- main/inc/lib/freemindflashbrowser/
+- main/inc/lib/internationalization_database/
+- main/inc/lib/javascript/
+- main/inc/lib/kses-0.2.2/
+- main/inc/lib/mimetex/
+- main/inc/lib/nanogong/
+- main/inc/lib/nusoap/
+- main/inc/lib/opengraph/*
+- main/inc/lib/ppt2png/
+- main/inc/lib/phpseclib
+- main/inc/lib/pear/
+- main/inc/lib/phpmailer/
+- main/inc/lib/phpseclib/
+- main/inc/lib/svg-edit/
+- main/inc/lib/swfobject/
+- main/inc/lib/mediaplayer
+- main/inc/lib/mxgraph/
+- main/inc/lib/wami-recorder/
+- main/inc/lib/xajax/
+- main/lp/packaging/
+- main/template/
+- main/img/
+- main/lang/
+- plugin/buycourses/resources/js/
+- plugin/buycourses/src/Culqi/
+- plugin/buycourses/src/Requests/
+- plugin/buycourses/src/Requests.php
+- plugin/buycourses/src/paypalfunctions.php
+- plugin/vchamilo/cli/
+- plugin/kannelsms/vendor/
+- plugin/clockworksms/vendor/
+- plugin/tour/intro.js
+- plugin/pens/lib
+- plugin/bbb/lib/bbb_api.php
+- plugin/ims_lti/OAuthSimple.php
+- plugin/sepe/src/wsse/
+- plugin/test2pdf/class/
+- plugin/jcapture/lib/
+- plugin/jcapture/src/
+- tests/
+- vendor/
+- web/
+=======
   - assets/*
   - bin/*
   - config/*
@@ -102,3 +171,4 @@ exclude_patterns:
   - tests/
   - vendor/
   - web/
+>>>>>>> master

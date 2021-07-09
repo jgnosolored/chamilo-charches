@@ -1,11 +1,10 @@
 <?php
-
 /* For license terms, see /license.txt */
 
 require_once '../config.php';
 
 $plugin = Test2pdfPlugin::create();
-$enable = 'true' == $plugin->get('enable_plugin');
+$enable = $plugin->get('enable_plugin') == 'true';
 if (!$enable) {
     header('Location: ../../../index.php');
     exit;
@@ -13,9 +12,9 @@ if (!$enable) {
 
 api_protect_course_script();
 
-$courseId = (int) ($_GET['c_id']);
+$courseId = intval($_GET['c_id']);
 $sessionId = api_get_session_id();
-$quizId = (int) ($_GET['id_quiz']);
+$quizId = intval($_GET['id_quiz']);
 
 $infoCourse = api_get_course_info_by_id($courseId);
 $infoQuiz = getInfoQuiz($courseId, $quizId);
@@ -40,7 +39,7 @@ if (!empty($infoQuiz['description'])) {
 $questionsList = getQuestionsFromCourse($courseId, $quizId, $sessionId);
 
 // Go through all questions and get the answers
-if ('question' == $_GET['type'] || 'all' == $_GET['type']) {
+if ($_GET['type'] == 'question' || $_GET['type'] == 'all') {
     $j = 1;
     foreach ($questionsList as $key => $value) {
         $infoQuestion = getInfoQuestion($courseId, $value);
@@ -68,7 +67,7 @@ if ('question' == $_GET['type'] || 'all' == $_GET['type']) {
     }
 }
 $j = 1;
-if ('answer' == $_GET['type'] || 'all' == $_GET['type']) {
+if ($_GET['type'] == 'answer' || $_GET['type'] == 'all') {
     $answerList = [];
     foreach ($questionsList as $key => $value) {
         $infoQuestion = getInfoQuestion($courseId, $value);
@@ -77,16 +76,16 @@ if ('answer' == $_GET['type'] || 'all' == $_GET['type']) {
         } else {
             $answers = '';
             $infoQuestion = getInfoQuestion($courseId, $value);
-            if (2 == $infoQuestion['type'] ||
-                9 == $infoQuestion['type'] ||
-                11 == $infoQuestion['type'] ||
-                12 == $infoQuestion['type'] ||
-                14 == $infoQuestion['type']
+            if ($infoQuestion['type'] == 2 ||
+                $infoQuestion['type'] == 9 ||
+                $infoQuestion['type'] == 11 ||
+                $infoQuestion['type'] == 12 ||
+                $infoQuestion['type'] == 14
             ) {
                 $infoAnswer = getAnswers($courseId, $value);
                 $answers .= ' '.($key + $j).' -';
                 foreach ($infoAnswer as $key2 => $value2) {
-                    if (1 == $value2['correct']) {
+                    if ($value2['correct'] == 1) {
                         $answers .= ' '.$letters[$key2].',';
                     }
                 }
@@ -97,9 +96,8 @@ if ('answer' == $_GET['type'] || 'all' == $_GET['type']) {
             } else {
                 $infoAnswer = getAnswers($courseId, $value);
                 foreach ($infoAnswer as $key2 => $value2) {
-                    if (1 == $value2['correct']) {
+                    if ($value2['correct'] == 1) {
                         $answers .= ' '.($key + $j).' - '.$letters[$key2].' ';
-
                         break;
                     }
                 }
@@ -116,7 +114,7 @@ if ('answer' == $_GET['type'] || 'all' == $_GET['type']) {
     $i = 1;
     foreach ($answerList as $resp) {
         $pdf->Cell(50, 6, $resp, 0);
-        if (0 == $i % 4) {
+        if ($i % 4 == 0) {
             $pdf->Ln();
         }
         $i++;

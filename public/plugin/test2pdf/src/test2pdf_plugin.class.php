@@ -2,6 +2,8 @@
 /**
  * Plugin class for the Test2Pdf plugin.
  *
+ * @package chamilo.plugin.test2pdf
+ *
  * @author Jose Angel Ruiz <desarrollo@nosolored.com>
  */
 class Test2pdfPlugin extends Plugin
@@ -26,7 +28,7 @@ class Test2pdfPlugin extends Plugin
     {
         static $result = null;
 
-        return $result ?: $result = new self();
+        return $result ? $result : $result = new self();
     }
 
     /**

@@ -32,10 +32,17 @@ Feature: Session management tool
     Given I am on "/main/session/session_add.php"
     When I fill in the following:
       | name | Temp Session |
+<<<<<<< HEAD
+    And I press advanced settings
+    And I fill in select2 input "#coach_username" with id "1" and value "admin"
+    And wait for the page to be loaded
+    And I fill in ckeditor field "description" with "Description for Temp Session"
+=======
     And I press "advanced_params"
     And I fill in select2 input "#coach_username" with id "1" and value "admin"
     And wait for the page to be loaded
     And I fill in editor field "description" with "Description for Temp Session"
+>>>>>>> master
     And I press "submit"
     Then wait for the page to be loaded
     Then I should see "Add courses to this session (Temp Session)"
@@ -54,8 +61,12 @@ Feature: Session management tool
     And wait for the page to be loaded
     And I follow "Temp Session"
     And I follow "Edit"
+<<<<<<< HEAD
+    And I press advanced settings
+=======
     And wait for the page to be loaded
     When I press "advanced_params"
+>>>>>>> master
     And I check "Show description"
     And I press "submit"
     Then wait very long for the page to be loaded
@@ -63,8 +74,13 @@ Feature: Session management tool
     #Then I should see "Update successful"
 
   Scenario: Check session description with platform setting off
+<<<<<<< HEAD
+    Given I am on "/main/admin/settings.php?search_field=show_session_description&category=search_setting"
+    And I check the "show_session_description" radio button with "false" value
+=======
     Given I am on "/admin/settings/search_settings?keyword=show_session_description"
     And I select "No" from "form_show_session_description"
+>>>>>>> master
     And I press "Save settings"
     Then wait very long for the page to be loaded
     Then I should see "Settings have been successfully updated"
@@ -73,8 +89,13 @@ Feature: Session management tool
 #    And I should not see "Description for Temp Session"
 
   Scenario: Check session description with platform setting on
+<<<<<<< HEAD
+    Given I am on "/main/admin/settings.php?search_field=show_session_description&category=search_setting"
+    And I check the "show_session_description" radio button with "true" value
+=======
     Given I am on "/admin/settings/search_settings?keyword=show_session_description"
     And I select "Yes" from "form_show_session_description"
+>>>>>>> master
     And I press "Save settings"
     Then wait very long for the page to be loaded
     Then I should see "Settings have been successfully updated"
@@ -102,5 +123,8 @@ Feature: Session management tool
     Given I am on "/main/session/session_category_list.php"
     And I follow "Delete"
     And I confirm the popup
+<<<<<<< HEAD
+=======
     And wait very long for the page to be loaded
+>>>>>>> master
     Then I should see "The selected categories have been deleted"

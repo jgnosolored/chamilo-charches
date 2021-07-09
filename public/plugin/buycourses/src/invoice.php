@@ -5,6 +5,8 @@ use Chamilo\CoreBundle\Component\Utils\ChamiloApi;
 
 /**
  * Print invoice of the Buy Courses plugin.
+ *
+ * @package chamilo.plugin.buycourses
  */
 $cidReset = true;
 
@@ -14,7 +16,7 @@ api_protect_admin_script();
 
 $plugin = BuyCoursesPlugin::create();
 
-$invoicingEnable = 'true' === $plugin->get('invoicing_enable');
+$invoicingEnable = $plugin->get('invoicing_enable') === 'true';
 if (!$invoicingEnable) {
     api_not_allowed(true, $plugin->get_lang('NoInvoiceEnable'));
 }
@@ -29,10 +31,10 @@ $extraUserInfoData = UserManager::get_extra_user_data($infoSale['user_id']);
 $infoInvoice = $plugin->getDataInvoice($saleId, $isService);
 
 $taxAppliesTo = $globalParameters['tax_applies_to'];
-$taxEnable = 'true' === $plugin->get('tax_enable') &&
-    (BuyCoursesPlugin::TAX_APPLIES_TO_ALL == $taxAppliesTo ||
-    (BuyCoursesPlugin::TAX_APPLIES_TO_ONLY_COURSE == $taxAppliesTo && !$isService) ||
-    (BuyCoursesPlugin::TAX_APPLIES_TO_ONLY_SESSION == $taxAppliesTo && $isService));
+$taxEnable = $plugin->get('tax_enable') === 'true' &&
+    ($taxAppliesTo == BuyCoursesPlugin::TAX_APPLIES_TO_ALL ||
+    ($taxAppliesTo == BuyCoursesPlugin::TAX_APPLIES_TO_ONLY_COURSE && !$isService) ||
+    ($taxAppliesTo == BuyCoursesPlugin::TAX_APPLIES_TO_ONLY_SESSION && $isService));
 
 $htmlText = '<html>';
 $htmlText .= '<link rel="stylesheet" type="text/css" href="plugin.css">';
@@ -42,7 +44,7 @@ $htmlText .= '<body>';
 $organization = ChamiloApi::getPlatformLogo('', [], true);
 // Use custom logo image.
 $pdfLogo = api_get_setting('pdf_logo_header');
-if ('true' === $pdfLogo) {
+if ($pdfLogo === 'true') {
     $visualTheme = api_get_visual_theme();
     $img = api_get_path(SYS_CSS_PATH).'themes/'.$visualTheme.'/images/pdf_logo_header.png';
     if (file_exists($img)) {
@@ -134,7 +136,7 @@ if ($taxEnable) {
 }
 $data[] = $row;
 $attr = [];
-$attr['class'] = 'table data_table';
+$attr['class'] = 'table table-hover table-striped data_table';
 $attr['width'] = '100%';
 $htmlText .= Display::table($header, $data, $attr);
 $htmlText .= '</body></html>';

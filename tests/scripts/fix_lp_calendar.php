@@ -1,6 +1,13 @@
 <?php
+<<<<<<< HEAD
+
 /* For licensing terms, see /license.txt */
 
+exit;
+=======
+/* For licensing terms, see /license.txt */
+
+>>>>>>> master
 require __DIR__ . '/../../main/inc/global.inc.php';
 
 $extraField = new ExtraField('lp_item');

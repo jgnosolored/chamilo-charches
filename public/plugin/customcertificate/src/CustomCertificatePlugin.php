@@ -4,6 +4,8 @@
 /**
  * Plugin class for the CustomCertificate plugin.
  *
+ * @package chamilo.plugin.customcertificate
+ *
  * @author Jose Angel Ruiz <desarrollo@nosolored.com>
  */
 class CustomCertificatePlugin extends Plugin
@@ -98,7 +100,7 @@ class CustomCertificatePlugin extends Plugin
     {
         $oldCertificateTable = 'gradebook_certificate_alternative';
         $base = api_get_path(WEB_UPLOAD_PATH);
-        if (1 == Database::num_rows(Database::query("SHOW TABLES LIKE '$oldCertificateTable'"))) {
+        if (Database::num_rows(Database::query("SHOW TABLES LIKE '$oldCertificateTable'")) == 1) {
             $sql = "SELECT * FROM $oldCertificateTable";
             $res = Database::query($sql);
             while ($row = Database::fetch_assoc($res)) {
@@ -165,7 +167,7 @@ class CustomCertificatePlugin extends Plugin
                     }
                 }
 
-                if (1 == $row['certificate_default']) {
+                if ($row['certificate_default'] == 1) {
                     $params['c_id'] = 0;
                     $params['session_id'] = 0;
                     $params['certificate_default'] = 1;
@@ -231,7 +233,7 @@ class CustomCertificatePlugin extends Plugin
             $courseCode = $row['course_code'];
             $sessionId = $row['session_id'];
             $userId = $row['user_id'];
-            if (1 == api_get_course_setting('customcertificate_course_enable', api_get_course_info($courseCode))) {
+            if (api_get_course_setting('customcertificate_course_enable', api_get_course_info($courseCode)) == 1) {
                 return [
                     'course_code' => $courseCode,
                     'session_id' => $sessionId,
@@ -255,7 +257,7 @@ class CustomCertificatePlugin extends Plugin
         $certId = (int) $certId;
         $userId = !empty($userId) ? $userId : api_get_user_id();
 
-        if ('true' === api_get_plugin_setting('customcertificate', 'enable_plugin_customcertificate')) {
+        if (api_get_plugin_setting('customcertificate', 'enable_plugin_customcertificate') === 'true') {
             $infoCertificate = self::getCertificateData($certId, $userId);
             if (!empty($infoCertificate)) {
                 if ($certificate->user_id == api_get_user_id() && !empty($certificate->certificate_data)) {

@@ -1,5 +1,4 @@
 <?php
-
 /* For licensing terms, see /license.txt */
 
 require_once __DIR__.'/../../main/inc/global.inc.php';
@@ -47,7 +46,6 @@ switch ($action) {
             header('Location: '.api_get_self());
             exit;
         }
-
         break;
     case 'edit':
         $form->setDefaults($term);
@@ -58,12 +56,11 @@ switch ($action) {
                 'definition' => $values['definition'],
             ];
             Database::update($table, $params, ['id = ?' => $id]);
-            Display::addFlash(Display::return_message(get_lang('Update successful')));
+            Display::addFlash(Display::return_message(get_lang('Updated')));
 
             header('Location: '.api_get_self());
             exit;
         }
-
         break;
     case 'delete':
         if (!empty($term)) {
@@ -72,7 +69,6 @@ switch ($action) {
             header('Location: '.api_get_self());
             exit;
         }
-
         break;
 }
 

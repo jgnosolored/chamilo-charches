@@ -1,12 +1,5 @@
 <?php
-
 /* For licensing terms, see /license.txt */
-
-namespace Chamilo\CoreBundle\Hook;
-
-use Chamilo\CoreBundle\Hook\Interfaces\HookMyStudentsLpTrackingEventInterface;
-use Chamilo\CoreBundle\Hook\Interfaces\HookMyStudentsLpTrackingObserverInterface;
-use Doctrine\ORM\EntityManager;
 
 /**
  * Class HookMyStudentsLpTracking.
@@ -15,13 +8,18 @@ class HookMyStudentsLpTracking extends HookEvent implements HookMyStudentsLpTrac
 {
     /**
      * HookMyStudentsLpTracking constructor.
+     *
+     * @throws Exception
      */
-    protected function __construct(EntityManager $entityManager)
+    protected function __construct()
     {
-        parent::__construct('HookMyStudentsLpTracking', $entityManager);
+        parent::__construct('HookMyStudentsLpTracking');
     }
 
-    public function notifyTrackingHeader(): array
+    /**
+     * @return array
+     */
+    public function notifyTrackingHeader()
     {
         $results = [];
 
@@ -36,8 +34,10 @@ class HookMyStudentsLpTracking extends HookEvent implements HookMyStudentsLpTrac
     /**
      * @param int $lpId
      * @param int $studentId
+     *
+     * @return array
      */
-    public function notifyTrackingContent($lpId, $studentId): array
+    public function notifyTrackingContent($lpId, $studentId)
     {
         $this->eventData['lp_id'] = $lpId;
         $this->eventData['student_id'] = $studentId;

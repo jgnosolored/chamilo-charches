@@ -9,8 +9,9 @@ use Chamilo\PluginBundle\Zoom\Recording;
 use Symfony\Component\HttpFoundation\Response;
 
 require_once __DIR__.'/config.php';
+
 if ('POST' !== $_SERVER['REQUEST_METHOD']) {
-    http_response_code(Response::HTTP_NOT_FOUND); // Not found
+    http_response_code(Response::HTTP_NOT_FOUND);
     exit;
 }
 
@@ -139,8 +140,6 @@ switch ($objectType) {
                 $meeting->addActivity($activity);
                 $em->persist($meeting);
                 $em->flush();
-                //error_log(sprintf('Event "%s" on %s was unhandled: %s', $action, $objectType, $body));
-                //http_response_code(501); // Not Implemented
                 break;
         }
         break;

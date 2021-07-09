@@ -4,7 +4,7 @@
 $useDefault = false;
 $isDefault = isset($_GET['default']) ? (int) $_GET['default'] : null;
 
-if (1 === $isDefault) {
+if ($isDefault === 1) {
     $cidReset = true;
 }
 
@@ -16,11 +16,11 @@ $_setting['student_view_enabled'] = 'false';
 $userId = api_get_user_id();
 $plugin = CustomCertificatePlugin::create();
 $nameTools = $plugin->get_lang('CertificateSetting');
-$enable = 'true' == $plugin->get('enable_plugin_customcertificate');
+$enable = $plugin->get('enable_plugin_customcertificate') == 'true';
 $accessUrlId = api_get_current_access_url_id();
 $course_info = api_get_course_info();
 
-if (1 === $isDefault) {
+if ($isDefault === 1) {
     $courseId = 0;
     $courseCode = '';
     $sessionId = 0;
@@ -33,8 +33,8 @@ if (1 === $isDefault) {
     $courseId = api_get_course_int_id();
     $courseCode = api_get_course_id();
     $sessionId = api_get_session_id();
-    $enableCourse = 1 == api_get_course_setting('customcertificate_course_enable', $course_info) ? true : false;
-    $useDefault = 1 == api_get_course_setting('use_certificate_default', $course_info) ? true : false;
+    $enableCourse = api_get_course_setting('customcertificate_course_enable', $course_info) == 1 ? true : false;
+    $useDefault = api_get_course_setting('use_certificate_default', $course_info) == 1 ? true : false;
     $defaultCertificate = 0;
     $urlParams = '?'.api_get_cidreq();
 }
@@ -84,7 +84,7 @@ $htmlHeadXtra[] = '<script>
                     success: function (response) {
                         window.location.reload();
                     }
-                });
+                }); 
             }
         });
 
@@ -137,7 +137,7 @@ if ($form->validate()) {
             'certificate_default' => 0,
         ];
 
-        if (intval(1 == $formValues['default_certificate'])) {
+        if (intval($formValues['default_certificate'] == 1)) {
             $params['certificate_default'] = 1;
         }
 
@@ -172,7 +172,6 @@ if ($form->validate()) {
                 );
             }
 
-            throw new Exception('@todo custom certificate upload');
             if ($_FILES[$field]['size']) {
                 $newPicture = api_upload_file(
                     'certificates',
@@ -191,7 +190,7 @@ if ($form->validate()) {
         }
 
         // Certificate Default
-        if (intval(1 == $formValues['use_default'])) {
+        if (intval($formValues['use_default'] == 1)) {
             $infoCertificateDefault = CustomCertificatePlugin::getInfoCertificateDefault($accessUrlId);
             if (!empty($infoCertificateDefault)) {
                 foreach ($fieldList as $field) {
@@ -432,17 +431,17 @@ $form->addHtml('<div class="form-group" style="padding-top: 10px;">
         <div class="col-sm-10">
         <div class="radio" style="margin-top: -25px;">
             <span style="margin: 0 10px; font-style: italic;">'.get_lang('From').'</span>
-            <input
+            <input 
                 size="20"
                 autofocus="autofocus"
                 class="form-control-cert text-center datepicker"
                 name="date_start"
                 id="date_start"
                 type="text"
-                value="'.(('1' == $infoCertificate['date_change'])
+                value="'.(($infoCertificate['date_change'] == '1')
                         ? date("d/m/Y", strtotime($infoCertificate['date_start']))
                         : '').'"
-                '.(('' == $infoCertificate['date_change']) ? 'disabled' : '').'
+                '.(($infoCertificate['date_change'] == '') ? 'disabled' : '').'
             >
             <span style="margin: 0 10px; font-style: italic;">'.get_lang('Until').'</span>
             <input
@@ -451,10 +450,10 @@ $form->addHtml('<div class="form-group" style="padding-top: 10px;">
                 name="date_end"
                 id="date_end"
                 type="text"
-                value="'.(('1' == $infoCertificate['date_change'])
+                value="'.(($infoCertificate['date_change'] == '1')
                         ? date("d/m/Y", strtotime($infoCertificate['date_end']))
                         : '').'"
-                '.(("0" == $infoCertificate['date_change']) ? 'disabled' : '').'
+                '.(($infoCertificate['date_change'] == "0") ? 'disabled' : '').'
             >
         </div>
         </div>
@@ -477,7 +476,7 @@ $option = &$form->createElement(
     [
         'id' => 'type_date_expediction_0',
         'onclick' => 'javascript: dateCertificateSwitchRadioButton0();',
-        ((0 == $sessionId) ? 'disabled' : ''),
+        (($sessionId == 0) ? 'disabled' : ''),
     ]
 );
 $group[] = $option;
@@ -556,7 +555,7 @@ $form->addHtml(
                 id="day"
                 type="text"
                 value="'.$infoCertificate['day'].'"
-                '.(('2' != $infoCertificate['type_date_expediction']) ? 'disabled' : '').'
+                '.(($infoCertificate['type_date_expediction'] != '2') ? 'disabled' : '').'
             >
             <span class="certificado-text-label">de</span>
             <input
@@ -567,7 +566,7 @@ $form->addHtml(
                 id="month"
                 type="text"
                 value="'.$infoCertificate['month'].'"
-                '.(('2' != $infoCertificate['type_date_expediction']) ? 'disabled' : '').'
+                '.(($infoCertificate['type_date_expediction'] != '2') ? 'disabled' : '').'
             >
             <span class="certificado-text-label">de</span>
             <input
@@ -578,7 +577,7 @@ $form->addHtml(
                 id="year"
                 type="text"
                 value="'.$infoCertificate['year'].'"
-                '.(('2' != $infoCertificate['type_date_expediction']) ? 'disabled' : '').'
+                '.(($infoCertificate['type_date_expediction'] != '2') ? 'disabled' : '').'
             >
         </div>
         </div>
@@ -896,13 +895,15 @@ while ($i < 298) {
     $marginOptions[$i] = $i.' mm';
     $i++;
 }
-$form->addSelect(
+$form->addElement(
+    'select',
     'margin_left',
     get_lang('MarginLeft'),
     $marginOptions,
     ['cols-size' => [4, 8, 0]]
 );
-$form->addSelect(
+$form->addElement(
+    'select',
     'margin_right',
     get_lang('MarginRight'),
     $marginOptions,
@@ -967,7 +968,7 @@ function checkInstanceImage($certificateId, $imagePath, $field, $type = 'certifi
 
     $sql = "SELECT * FROM $table WHERE $field = '$imagePath'";
     $res = Database::query($sql);
-    if (1 == Database::num_rows($res)) {
+    if (Database::num_rows($res) == 1) {
         api_remove_uploaded_file($type, $imagePath);
     }
 

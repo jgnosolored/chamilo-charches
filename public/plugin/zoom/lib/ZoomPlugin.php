@@ -4,7 +4,7 @@
 
 use Chamilo\CoreBundle\Entity\Course;
 use Chamilo\CoreBundle\Entity\Session;
-use Chamilo\CourseBundle\Entity\CGroup;
+use Chamilo\CourseBundle\Entity\CGroupInfo;
 use Chamilo\PluginBundle\Zoom\API\JWTClient;
 use Chamilo\PluginBundle\Zoom\API\MeetingInfoGet;
 use Chamilo\PluginBundle\Zoom\API\MeetingRegistrant;
@@ -104,6 +104,7 @@ class ZoomPlugin extends Plugin
             return false;
         }
 
+        //return 'true' === api_get_plugin_setting('zoom', 'enableGlobalConference') && api_user_is_login();
         return
             'true' === api_get_plugin_setting('zoom', 'enableGlobalConference')
             && in_array(
@@ -194,6 +195,7 @@ class ZoomPlugin extends Plugin
         if ($tablesExists) {
             return;
         }
+
         (new SchemaTool(Database::getManager()))->createSchema(
             [
                 Database::getManager()->getClassMetadata(Meeting::class),
@@ -202,7 +204,26 @@ class ZoomPlugin extends Plugin
                 Database::getManager()->getClassMetadata(Registrant::class),
             ]
         );
-        $this->install_course_fields_in_all_courses();
+
+        // Copy icons into the main/img/icons folder
+        $iconName = 'zoom_meet';
+        $iconsList = [
+            '64/'.$iconName.'.png',
+            '64/'.$iconName.'_na.png',
+            '32/'.$iconName.'.png',
+            '32/'.$iconName.'_na.png',
+            '22/'.$iconName.'.png',
+            '22/'.$iconName.'_na.png',
+        ];
+        $sourceDir = api_get_path(SYS_PLUGIN_PATH).'zoom/resources/img/';
+        $destinationDir = api_get_path(SYS_CODE_PATH).'img/icons/';
+        foreach ($iconsList as $icon) {
+            $src = $sourceDir.$icon;
+            $dest = $destinationDir.$icon;
+            copy($src, $dest);
+        }
+
+        $this->install_course_fields_in_all_courses(true, 'zoom_meet.png');
     }
 
     /**
@@ -220,6 +241,24 @@ class ZoomPlugin extends Plugin
             ]
         );
         $this->uninstall_course_fields_in_all_courses();
+
+        // Remove icons from the main/img/icons folder
+        $iconName = 'zoom_meet';
+        $iconsList = [
+            '64/'.$iconName.'.png',
+            '64/'.$iconName.'_na.png',
+            '32/'.$iconName.'.png',
+            '32/'.$iconName.'_na.png',
+            '22/'.$iconName.'.png',
+            '22/'.$iconName.'_na.png',
+        ];
+        $destinationDir = api_get_path(SYS_CODE_PATH).'img/icons/';
+        foreach ($iconsList as $icon) {
+            $dest = $destinationDir.$icon;
+            if (is_file($dest)) {
+                @unlink($dest);
+            }
+        }
     }
 
     /**
@@ -590,11 +629,11 @@ class ZoomPlugin extends Plugin
         if (empty($courseInfo)) {
             throw new Exception('This meeting is not linked to a valid course');
         }
-        /*$path = '/zoom_meeting_recording_file_'.$file->id.'.'.$file->file_type;
+        $path = '/zoom_meeting_recording_file_'.$file->id.'.'.$file->file_type;
         $docId = DocumentManager::addCloudLink($courseInfo, $path, $file->play_url, $name);
         if (!$docId) {
             throw new Exception(get_lang(DocumentManager::cloudLinkExists($courseInfo, $path, $file->play_url) ? 'UrlAlreadyExists' : 'ErrorAddCloudLink'));
-        }*/
+        }
     }
 
     /**
@@ -651,8 +690,7 @@ class ZoomPlugin extends Plugin
             $groupId = $group->getIid();
         }
 
-        $newPath = null;
-        /*$newPath = handle_uploaded_document(
+        $newPath = handle_uploaded_document(
             $courseInfo,
             [
                 'name' => $name,
@@ -674,7 +712,7 @@ class ZoomPlugin extends Plugin
             null,
             $sessionId,
             true
-        );*/
+        );
 
         fclose($tmpFile);
         if (false === $newPath) {
@@ -691,7 +729,7 @@ class ZoomPlugin extends Plugin
     public function getCreateInstantMeetingForm(
         User $user,
         Course $course,
-        CGroup $group = null,
+        CGroupInfo $group = null,
         Session $session = null
     ) {
         $extraUrl = '';
@@ -721,7 +759,7 @@ class ZoomPlugin extends Plugin
      *
      * @return FormValidator
      */
-    public function getScheduleMeetingForm(User $user, Course $course = null, CGroup $group = null, Session $session = null)
+    public function getScheduleMeetingForm(User $user, Course $course = null, CGroupInfo $group = null, Session $session = null)
     {
         $extraUrl = '';
         if (!empty($course)) {
@@ -969,7 +1007,8 @@ class ZoomPlugin extends Plugin
 
                     if ($isSubscribed) {
                         if ($meeting->isCourseGroupMeeting()) {
-                            $isInGroup = GroupManager::isUserInGroup($userId, $meeting->getGroup());
+                            $groupInfo = GroupManager::get_group_properties($meeting->getGroup()->getIid(), true);
+                            $isInGroup = GroupManager::is_user_in_group($userId, $groupInfo);
                             if (false === $isInGroup) {
                                 throw new Exception($this->get_lang('YouAreNotRegisteredToThisMeeting'));
                             }
@@ -1276,11 +1315,11 @@ class ZoomPlugin extends Plugin
     /**
      * Starts a new instant meeting and redirects to its start url.
      *
-     * @param string       $topic
-     * @param User|null    $user
-     * @param Course|null  $course
-     * @param CGroup|null  $group
-     * @param Session|null $session
+     * @param string          $topic
+     * @param User|null       $user
+     * @param Course|null     $course
+     * @param CGroupInfo|null $group
+     * @param Session|null    $session
      *
      * @throws Exception
      */
@@ -1371,7 +1410,7 @@ class ZoomPlugin extends Plugin
     private function createScheduleMeeting(
         User $user = null,
         Course $course = null,
-        CGroup $group = null,
+        CGroupInfo $group = null,
         Session $session = null,
         $startTime,
         $duration,

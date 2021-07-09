@@ -57,14 +57,22 @@ Feature: LP tool
 #    Given I am on "/main/admin/settings.php?category=Course"
 #    And I check the "hide_scorm_pdf_link" radio button with "false" value
 #    And I press "Save settings"
+<<<<<<< HEAD
+#    And I am on "/main/lp/lp_controller.php?cidReq=TEMP&action=list&isStudentView=true"
+=======
 #    And I am on "/main/lp/lp_controller.php?cid=1&action=list&isStudentView=true"
+>>>>>>> master
 #    Then I should see an icon with title "Export to PDF"
 #
 #  Scenario: Check the PDF export in LP list if hide SCORM PDF link is true
 #    Given I am on "/main/admin/settings.php?category=Course"
 #    And I check the "hide_scorm_pdf_link" radio button with "true" value
 #    And I press "Save settings"
+<<<<<<< HEAD
+#    And I am on "/main/lp/lp_controller.php?cidReq=TEMP&action=list&isStudentView=true"
+=======
 #    And I am on "/main/lp/lp_controller.php?cid=1&action=list&isStudentView=true"
+>>>>>>> master
 #    Then I should not see an icon with title "Export to PDF"
 
 #  Scenario: LP exists and LP category exists
@@ -78,14 +86,25 @@ Feature: LP tool
 #    Given I am not logged
 #    And I am a platform administrator
 #    And I am on course "TEMP" homepage
+<<<<<<< HEAD
+#    And I am on "/main/lp/lp_controller.php?cidReq=TEMP&action=list"
+=======
 #    And I am on "/main/lp/lp_controller.php?cid=1&action=list"
+>>>>>>> master
 #    Then I should see "LP category 1"
 #    And I follow "Delete"
 #    And I confirm the popup
 #    Then I should not see "LP 1"
 #
 #  Scenario: Delete a LP category
+<<<<<<< HEAD
+#    Given I am on "/main/lp/lp_controller.php?cidReq=TEMP"
+#    Then I should see "LP category 1"
+#    And I follow "Delete"
+#    Then I should see "Deleted"
+=======
 #    Given I am on "/main/lp/lp_controller.php?cid=1"
 #    Then I should see "LP category 1"
 #    And I follow "Delete"
 #    Then I should see "Deleted"
+>>>>>>> master

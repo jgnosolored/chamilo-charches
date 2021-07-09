@@ -1,6 +1,13 @@
 services:
+<<<<<<< HEAD
+  phpcsfixer: true
+  yamllint:
+    version: latest
+    config_path: .yamllint_config
+=======
     phpcsfixer:
         config_path: .php_cs
     yamllint:
         version: latest
         config_path: .yamllint_config
+>>>>>>> master

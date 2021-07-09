@@ -1,5 +1,4 @@
 <?php
-
 /* For licensing terms, see /license.txt */
 
 use ChamiloSession as Session;
@@ -13,7 +12,7 @@ api_protect_course_script(true);
 $_setting['student_view_enabled'] = 'false';
 
 $plugin = NotebookTeacherPlugin::create();
-$enable = 'true' == $plugin->get('enable_plugin_notebookteacher');
+$enable = $plugin->get('enable_plugin_notebookteacher') == 'true';
 
 if (!$enable) {
     api_not_allowed(true, $plugin->get_lang('ToolDisabled'));
@@ -57,13 +56,13 @@ $noteBookTeacher = $tool = $plugin->get_lang('NotebookTeacher');
 
 switch ($action) {
     case 'addnote':
-        $tool = 'Add new note in my personal notebook';
+        $tool = 'NoteAddNew';
         $interbreadcrumb[] = [
             'url' => 'index.php?'.api_get_cidreq(),
             'name' => $noteBookTeacher,
         ];
 
-        if ((0 != api_get_session_id() &&
+        if ((api_get_session_id() != 0 &&
             !api_is_allowed_to_session_edit(false, true) || api_is_drh())) {
             api_not_allowed();
         }
@@ -74,7 +73,7 @@ switch ($action) {
             'post',
             $currentUrl.'&action=addnote'
         );
-        $form->addHeader(get_lang('Add new note in my personal notebook'));
+        $form->addHeader(get_lang('NoteAddNew'));
         $form = NotebookTeacher::getForm($form, $studentId);
 
         $form->setDefaults(['student_id' => $studentId]);
@@ -85,7 +84,7 @@ switch ($action) {
                 $values = $form->exportValues();
                 $res = NotebookTeacher::saveNote($values);
                 if ($res) {
-                    Display::addFlash(Display::return_message(get_lang('Note added'), 'confirmation'));
+                    Display::addFlash(Display::return_message(get_lang('NoteAdded'), 'confirmation'));
                 }
             }
 
@@ -100,7 +99,7 @@ switch ($action) {
 
             echo '<div class="actions">';
             echo '<a href="index.php">'.
-                Display::return_icon('back.png', get_lang('Back to the notes list'), '', ICON_SIZE_MEDIUM).
+                Display::return_icon('back.png', get_lang('BackToNotesList'), '', ICON_SIZE_MEDIUM).
                 '</a>';
             echo '</div>';
             $token = Security::get_token();
@@ -108,10 +107,9 @@ switch ($action) {
             $form->setConstants(['sec_token' => $token]);
             $form->display();
         }
-
         break;
     case 'editnote':
-        $tool = 'Edit my personal note';
+        $tool = 'ModifyNote';
         $interbreadcrumb[] = [
             'url' => 'index.php?'.api_get_cidreq(),
             'name' => $noteBookTeacher,
@@ -133,7 +131,7 @@ switch ($action) {
             $currentUrl.'&action='.$action.'&notebook_id='.$notebookId
         );
         // Setting the form elements
-        $form->addHeader(get_lang('Edit my personal note'));
+        $form->addHeader(get_lang('ModifyNote'));
         $form->addHidden('notebook_id', $notebookId);
         $form = NotebookTeacher::getForm($form, $defaults['student_id']);
 
@@ -147,7 +145,7 @@ switch ($action) {
                 $values = $form->exportValues();
                 $res = NotebookTeacher::updateNote($values);
                 if ($res) {
-                    Display::addFlash(Display::return_message(get_lang('Note updated'), 'confirmation'));
+                    Display::addFlash(Display::return_message(get_lang('NoteUpdated'), 'confirmation'));
                 }
             }
             header('Location: '.$currentUrl);
@@ -160,65 +158,59 @@ switch ($action) {
             Display::display_introduction_section($noteBookTeacher);
             echo '<div class="actions">';
             echo '<a href="index.php">'.
-                Display::return_icon('back.png', get_lang('Back to the notes list'), '', ICON_SIZE_MEDIUM).'</a>';
+                Display::return_icon('back.png', get_lang('BackToNotesList'), '', ICON_SIZE_MEDIUM).'</a>';
             echo '</div>';
             $token = Security::get_token();
             $form->addElement('hidden', 'sec_token');
             $form->setConstants(['sec_token' => $token]);
             $form->display();
         }
-
         break;
     case 'deletenote':
         $res = NotebookTeacher::deleteNote($notebookId);
         if ($res) {
-            Display::addFlash(Display::return_message(get_lang('Note deleted'), 'confirmation'));
+            Display::addFlash(Display::return_message(get_lang('NoteDeleted'), 'confirmation'));
         }
         header('Location: '.$currentUrl);
         exit;
-
         break;
     case 'changeview':
         if (in_array($_GET['view'], ['creation_date', 'update_date', 'title'])) {
             switch ($_GET['view']) {
                 case 'creation_date':
-                    if (!$_GET['direction'] || 'ASC' == $_GET['direction']) {
+                    if (!$_GET['direction'] || $_GET['direction'] == 'ASC') {
                         Display::addFlash(
-                            Display::return_message(get_lang('Notes sorted by creation date ascendant'), 'confirmation')
+                            Display::return_message(get_lang('NotesSortedByCreationDateAsc'), 'confirmation')
                         );
                     } else {
                         Display::addFlash(
-                            Display::return_message(get_lang('Notes sorted by creation date downward'), 'confirmation')
+                            Display::return_message(get_lang('NotesSortedByCreationDateDESC'), 'confirmation')
                         );
                     }
-
                     break;
                 case 'update_date':
-                    if (!$_GET['direction'] || 'ASC' == $_GET['direction']) {
+                    if (!$_GET['direction'] || $_GET['direction'] == 'ASC') {
                         Display::addFlash(
-                            Display::return_message(get_lang('Notes sorted by update date ascendant'), 'confirmation')
+                            Display::return_message(get_lang('NotesSortedByUpdateDateAsc'), 'confirmation')
                         );
                     } else {
                         Display::addFlash(
-                            Display::return_message(get_lang('Notes sorted by update date downward'), 'confirmation')
+                            Display::return_message(get_lang('NotesSortedByUpdateDateDESC'), 'confirmation')
                         );
                     }
-
                     break;
                 case 'title':
-                    if (!$_GET['direction'] || 'ASC' == $_GET['direction']) {
-                        Display::addFlash(Display::return_message(get_lang('Notes sorted by title ascendant'), 'confirmation'));
+                    if (!$_GET['direction'] || $_GET['direction'] == 'ASC') {
+                        Display::addFlash(Display::return_message(get_lang('NotesSortedByTitleAsc'), 'confirmation'));
                     } else {
-                        Display::addFlash(Display::return_message(get_lang('Notes sorted by title downward'), 'confirmation'));
+                        Display::addFlash(Display::return_message(get_lang('NotesSortedByTitleDESC'), 'confirmation'));
                     }
-
                     break;
             }
             Session::write('notebook_view', Security::remove_XSS($_GET['view']));
             header('Location: '.$currentUrl);
             exit;
         }
-
         break;
     default:
         // Displaying the header
@@ -227,7 +219,6 @@ switch ($action) {
         // Tool introduction
         Display::display_introduction_section($noteBookTeacher);
         NotebookTeacher::displayNotes();
-
         break;
 }
 

@@ -1,5 +1,4 @@
 <?php
-
 /* For license terms, see /license.txt */
 
 /**
@@ -100,16 +99,16 @@ class LearningCalendarPlugin extends Plugin
         ";
         Database::query($sql);
 
-        $sql = '
+        $sql = "
             CREATE TABLE IF NOT EXISTS learning_calendar_user(
               id int not null AUTO_INCREMENT primary key,
               user_id int(11) not null,
               calendar_id int not null
             )
-        ';
+        ";
         Database::query($sql);
 
-        $sql = '
+        $sql = "
             CREATE TABLE IF NOT EXISTS learning_calendar_control_point(
               id int not null AUTO_INCREMENT primary key,
               user_id int(11) not null,
@@ -118,12 +117,12 @@ class LearningCalendarPlugin extends Plugin
               created_at datetime not null,
               updated_at datetime not null
             )
-        ';
+        ";
         Database::query($sql);
 
         $extraField = new ExtraField('lp_item');
         $params = [
-            'display_text' => $this->get_lang('Learning calendarOneDayMarker'),
+            'display_text' => $this->get_lang('LearningCalendarOneDayMarker'),
             'variable' => 'calendar',
             'visible_to_self' => 1,
             'changeable' => 1,
@@ -135,7 +134,7 @@ class LearningCalendarPlugin extends Plugin
 
         $extraField = new ExtraField('course');
         $params = [
-            'display_text' => $this->get_lang('Course duration (h)'),
+            'display_text' => $this->get_lang('CourseHoursDuration'),
             'variable' => 'course_hours_duration',
             'visible_to_self' => 1,
             'changeable' => 1,
@@ -269,11 +268,11 @@ class LearningCalendarPlugin extends Plugin
         $endCondition = '';
         $typeCondition = '';
 
-        if (0 !== $start) {
+        if ($start !== 0) {
             $start = api_get_utc_datetime($start);
             $startCondition = "AND start_date >= '".$start."'";
         }
-        if (0 !== $end) {
+        if ($end !== 0) {
             $end = api_get_utc_datetime($end);
             $endCondition = "AND (end_date <= '".$end."' OR end_date IS NULL)";
         }
@@ -405,7 +404,7 @@ class LearningCalendarPlugin extends Plugin
                 ];
                 $extraField->save($params);
             } else {
-                $newValue = 1 === (int) $itemInfo['value'] ? 0 : 1;
+                $newValue = (int) $itemInfo['value'] === 1 ? 0 : 1;
                 $extraField = new ExtraFieldValue('lp_item');
                 $params = [
                     'id' => $itemInfo['id'],
@@ -443,8 +442,9 @@ class LearningCalendarPlugin extends Plugin
         $calendarId = (int) $calendarId;
         $sql = "SELECT * FROM learning_calendar WHERE id = $calendarId";
         $result = Database::query($sql);
+        $item = Database::fetch_array($result, 'ASSOC');
 
-        return Database::fetch_array($result, 'ASSOC');
+        return $item;
     }
 
     /**
@@ -457,8 +457,9 @@ class LearningCalendarPlugin extends Plugin
         $userId = (int) $userId;
         $sql = "SELECT * FROM learning_calendar_user WHERE user_id = $userId";
         $result = Database::query($sql);
+        $item = Database::fetch_array($result, 'ASSOC');
 
-        return Database::fetch_array($result, 'ASSOC');
+        return $item;
     }
 
     /**
@@ -579,8 +580,8 @@ class LearningCalendarPlugin extends Plugin
     public function getForm(FormValidator &$form)
     {
         $form->addText('title', get_lang('Title'));
-        $form->addText('total_hours', get_lang('Total hours'));
-        $form->addText('minutes_per_day', get_lang('Minutes per day'));
+        $form->addText('total_hours', get_lang('TotalHours'));
+        $form->addText('minutes_per_day', get_lang('MinutesPerDay'));
         $form->addHtmlEditor('description', get_lang('Description'), false);
     }
 
@@ -821,7 +822,7 @@ class LearningCalendarPlugin extends Plugin
         // @todo use translation
         // get events from this year to today
         $stats = $this->getUserStats($userId, $courseAndSessionList);
-        $html = $this->get_lang('Number of days accumulated in calendar').$stats['user_event_count'];
+        $html = $this->get_lang('NumberDaysAccumulatedInCalendar').$stats['user_event_count'];
         if (!empty($courseAndSessionList)) {
             $html .= '<br />';
             $html .= $this->get_lang('NumberDaysAccumulatedInLp').$stats['completed'];
@@ -839,26 +840,26 @@ class LearningCalendarPlugin extends Plugin
             $html .= '<div id="control_point_chart"></div>';
             $html .= '<script>
                 $(document).ready(function(){
-                    var cosPoints = '.$listToString.';
-                    var plot1 = $.jqplot(\'control_point_chart\', [cosPoints], {  
+                    var cosPoints = '.$listToString.';
+                    var plot1 = $.jqplot(\'control_point_chart\', [cosPoints], {  
                         //animate: !$.jqplot.use_excanvas,                      
-                        series:[{
+                        series:[{
                             showMarker:true,
-                            pointLabels: { show:true },
+                            pointLabels: { show:true },
                         }],
-                        axes:{
-                            xaxis:{
-                                label: "'.$date.'",
+                        axes:{
+                            xaxis:{
+                                label: "'.$date.'",
                                 renderer: $.jqplot.DateAxisRenderer,
                                 tickOptions:{formatString: "%Y-%m-%d"},
                                 tickInterval: \'30 day\',                                
-                            },
+                            },
                             yaxis:{
-                                label: "'.$controlPoint.'",
+                                label: "'.$controlPoint.'",
                                 max: 20,
                                 min: -20,    
-                            }
-                        },
+                            }
+                        },
                         canvasOverlay: {
                             show: true,
                             objects: [{
@@ -871,12 +872,14 @@ class LearningCalendarPlugin extends Plugin
                                 }
                             }]
                         },                     
-                  });
+                  });
                 });
             </script>';
         }
 
-        return Display::panel($html, $this->get_lang('Learning calendar'));
+        $html = Display::panel($html, $this->get_lang('LearningCalendar'));
+
+        return $html;
     }
 
     /**
@@ -1076,8 +1079,9 @@ class LearningCalendarPlugin extends Plugin
                 WHERE user_id = $userId 
                 ORDER BY control_date";
         $result = Database::query($sql);
+        $list = Database::store_result($result, 'ASSOC');
 
-        return Database::store_result($result, 'ASSOC');
+        return $list;
     }
 
     /**
@@ -1137,7 +1141,7 @@ class LearningCalendarPlugin extends Plugin
         $calendars = $this->getCalendars(0, 1000, '');
 
         if (empty($calendars)) {
-            echo Display::return_message(get_lang('No data available'), 'warning');
+            echo Display::return_message(get_lang('NoData'), 'warning');
             exit;
         }
         $calendars = array_column($calendars, 'title', 'id');

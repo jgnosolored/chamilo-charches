@@ -1,16 +1,44 @@
+<<<<<<< HEAD
+#NSR
+/plugin/buycourses/resources/php/apiRedsys.php
+/plugin/buycourses/lang/spanish.php
+
+# Cache directories
+
+app/cache/*
+!app/cache/.gitkeep
+!app/cache/.htaccess
+=======
 # Chamilo 1.x
 
 app
 courses
 web/assets/*
+>>>>>>> master
 
 # Cache directories
 
+<<<<<<< HEAD
+# Chamilo configuration
+/app/config/parameters.yml
+/app/config/add_course.conf.php
+/app/config/auth.conf.php
+/app/config/course_info.conf.php
+/app/config/events.conf.php
+/app/config/mail.conf.php
+/app/config/profile.conf.php
+/app/config/configuration.php
+
+# Courses
+app/courses/*
+!app/courses/proxy.php
+=======
 var/cache/*
 !var/cache/.gitkeep
 
 var/log/*
 !var/log/.gitkeep
+>>>>>>> master
 
 # Courses
 var/courses/*
@@ -28,6 +56,8 @@ var/upload/*
 
 # Home
 components/*
+
+.php_cs.cache
 
 # Logs and databases #
 *.log
@@ -49,6 +79,12 @@ public/main/cron/incoming/*
 public/plugin/vchamilo/templates/*
 
 # Stuff updated through composer - Remove just before release
+<<<<<<< HEAD
+/vendor
+web/
+node_modules
+yarn.lock
+=======
 vendor
 composer.lock
 symfony.lock
@@ -90,3 +126,4 @@ yarn-error.log
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
+>>>>>>> master

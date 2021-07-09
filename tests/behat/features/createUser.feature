@@ -6,11 +6,22 @@ Feature: Users management as admin
 
   Background:
     Given I am a platform administrator
+<<<<<<< HEAD
+
+  Scenario: See the users list link on the admin page
+    Given I am on "/main/admin/index.php"
+    Then I should see "Users list"
+
+  Scenario: See the user creation link on the admin page
+    And I am on "/main/admin/index.php"
+    Then I should see "Add a user"
+=======
 
   Scenario: See the users list link on the admin page
     Given I am on "/main/admin/index.php"
     Then I should see "Users list"
     And I should see "Add a user"
+>>>>>>> master
 
   Scenario: Create a user with only basic info
     And I am on "/main/admin/user_add.php"
@@ -35,7 +46,10 @@ Feature: Users management as admin
       | password  | smarshall             |
     And I check the "#send_mail_no" radio button selector
     And I press "submit"
+<<<<<<< HEAD
+=======
     And wait very long for the page to be loaded
+>>>>>>> master
     Then I should see "Only letters and numbers allowed"
 
   Scenario: Create a user with wrong email
@@ -48,12 +62,20 @@ Feature: Users management as admin
       | password  | Juls                  |
     And I check the "#send_mail_no" radio button selector
     And I press "submit"
+<<<<<<< HEAD
+    Then I should see "The email address is not complete or contains some invalid characters"
+
+  Scenario: Search and delete a user
+    And Admin top bar is disabled
+    And I am on "/main/admin/user_list.php"
+=======
     And wait very long for the page to be loaded
     Then I should see "The email address is not complete or contains some invalid characters"
 
   Scenario: Search and delete a user
     Given I am on "/main/admin/user_list.php"
     And wait the page to be loaded when ready
+>>>>>>> master
     And I fill in "keyword" with "smarshall"
     And I press "submit"
     And I am on "/main/admin/user_list.php"
@@ -72,9 +94,13 @@ Feature: Users management as admin
       | username  | hrm             |
       | password  | hrm             |
     And I check the "#send_mail_no" radio button selector
+<<<<<<< HEAD
+    And I fill in select bootstrap static input "#status_select" select "4"
+=======
 #    And I fill in select bootstrap static input "#status_select" select "4"
     And I select "Human Resources Manager" from "status_select"
     And wait very long for the page to be loaded
+>>>>>>> master
     And I press "submit"
     And wait very long for the page to be loaded
     Then I should see "The user has been added"
@@ -87,8 +113,12 @@ Feature: Users management as admin
       | email     | teacher@example.com |
       | username  | teacher             |
       | password  | teacher             |
+<<<<<<< HEAD
+    And I fill in select bootstrap static input "#status_select" select "1"
+=======
 #    And I fill in select bootstrap static input "#status_select" select "1"
     And I select "Trainer" from "status_select"
+>>>>>>> master
     And I check the "#send_mail_no" radio button selector
     And I press "submit"
     And wait very long for the page to be loaded
@@ -102,8 +132,12 @@ Feature: Users management as admin
       | email     | student@example.com |
       | username  | student             |
       | password  | student             |
+<<<<<<< HEAD
+    And I fill in select bootstrap static input "#status_select" select "5"
+=======
 #    And I fill in select bootstrap static input "#status_select" select "5"
     And I select "Learner" from "status_select"
+>>>>>>> master
     And I check the "#send_mail_no" radio button selector
     And I press "submit"
     And wait very long for the page to be loaded

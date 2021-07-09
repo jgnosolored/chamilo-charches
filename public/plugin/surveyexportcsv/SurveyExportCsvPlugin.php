@@ -1,5 +1,4 @@
 <?php
-
 /* For licensing terms, see /license.txt */
 
 /**
@@ -27,7 +26,7 @@ class SurveyExportCsvPlugin extends Plugin
     {
         static $result = null;
 
-        return $result ?: $result = new self();
+        return $result ? $result : $result = new self();
     }
 
     /**
@@ -53,7 +52,7 @@ class SurveyExportCsvPlugin extends Plugin
     {
         $enabled = api_get_plugin_setting('surveyexportcsv', 'enabled');
 
-        if ('true' !== $enabled) {
+        if ($enabled !== 'true') {
             return '';
         }
 
@@ -65,7 +64,7 @@ class SurveyExportCsvPlugin extends Plugin
         }
 
         return Display::url(
-            Display::return_icon('export_csv.png', get_lang('CSV export'), [], $iconSize),
+            Display::return_icon('export_csv.png', get_lang('ExportAsCSV'), [], $iconSize),
             api_get_path(WEB_PLUGIN_PATH).'surveyexportcsv/export.php?survey='.$surveyId.'&'.api_get_cidreq()
         );
     }

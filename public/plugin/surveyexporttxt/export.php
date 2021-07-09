@@ -1,5 +1,4 @@
 <?php
-
 /* For licensing terms, see /license.txt */
 
 use Chamilo\CourseBundle\Entity\CSurveyQuestionOption;
@@ -20,7 +19,7 @@ if (empty($surveyData)) {
 $plugin = SurveyExportTxtPlugin::create();
 $allowExportIncomplete = 'true' === $plugin->get('export_incomplete');
 
-if ('true' !== $plugin->get('enabled')) {
+if ($plugin->get('enabled') !== 'true') {
     api_not_allowed(true);
 }
 
@@ -71,7 +70,7 @@ foreach ($questionsData as $questionData) {
 if (count($parts) < 2) {
     api_not_allowed(
         true,
-        Display::return_message(get_lang('No data available'), 'warning')
+        Display::return_message(get_lang('NoData'), 'warning')
     );
 }
 
@@ -115,7 +114,7 @@ foreach ($surveyAnswers as $answer) {
 
         /** @var CSurveyQuestionOption $option */
         foreach ($options as $option) {
-            $surveyLine .= $option->getSort();
+            $surveyLine .= '('.str_pad($option->getSort(), 2, '0', STR_PAD_LEFT).')';
         }
     }
 
@@ -149,14 +148,14 @@ foreach ($surveyAnswers as $answer) {
         continue;
     }
 
-    $content[] = '"'.$i.'","'.$surveyLine;
+    $content[] = '"","'.$surveyLine.',"'.str_pad($i, 4, '0', STR_PAD_LEFT).'"';
     $i++;
 }
 
 // Add EOL to lines
 $fileContent = array_map(
     function ($line) {
-        return html_entity_decode($line).PHP_EOL.PHP_EOL;
+        return html_entity_decode($line).PHP_EOL;
     },
     $content
 );
@@ -178,7 +177,7 @@ DocumentManager::file_send_for_download($fileName, true);
  */
 function getQuestionOptions($user, $courseId, $surveyId, $questionId)
 {
-    return Database::getManager()
+    $options = Database::getManager()
         ->createQuery(
             'SELECT sqo FROM ChamiloCourseBundle:CSurveyQuestionOption sqo
             INNER JOIN ChamiloCourseBundle:CSurveyAnswer sa
@@ -199,4 +198,6 @@ function getQuestionOptions($user, $courseId, $surveyId, $questionId)
             ]
         )
         ->getResult();
+
+    return $options;
 }

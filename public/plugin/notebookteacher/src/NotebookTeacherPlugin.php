@@ -1,9 +1,10 @@
 <?php
-
 /* For license terms, see /license.txt */
 
 /**
  * Plugin class for the NotebookTeacher plugin.
+ *
+ * @package chamilo.plugin.notebookteacher
  *
  * @author Jose Angel Ruiz <desarrollo@nosolored.com>
  * @author Julio Montoya
@@ -36,7 +37,7 @@ class NotebookTeacherPlugin extends Plugin
     {
         static $result = null;
 
-        return $result ?: $result = new self();
+        return $result ? $result : $result = new self();
     }
 
     /**
@@ -104,8 +105,8 @@ class NotebookTeacherPlugin extends Plugin
 
         $sql = 'SHOW COLUMNS FROM '.$tableNotebookTeacher.' WHERE Field = "student_id"';
         $rs = Database::query($sql);
-        if (0 === Database::num_rows($rs)) {
-            $sql = 'ALTER TABLE '.$tableNotebookTeacher.' ADD student_id INT( 10 ) UNSIGNED NOT NULL AFTER user_id';
+        if (Database::num_rows($rs) === 0) {
+            $sql = "ALTER TABLE ".$tableNotebookTeacher." ADD student_id INT( 10 ) UNSIGNED NOT NULL AFTER user_id";
             Database::query($sql);
         }
 

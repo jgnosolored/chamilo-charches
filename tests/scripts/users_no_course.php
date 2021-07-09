@@ -1,4 +1,5 @@
 <?php
+
 /* For licensing terms, see /license.txt */
 
 /**
@@ -27,7 +28,11 @@ $students = Database::store_result($result);
 if (!empty($students)) {
     foreach ($students as $student) {
         var_dump($student['username'].'- '.$student['user_id']);
+<<<<<<< HEAD
+        $result = CourseManager::subscribeUser($student['user_id'], $courseCode);
+=======
         $result = CourseManager::subscribeUser($student['user_id'], $courseId);
+>>>>>>> master
         var_dump($result);
         echo '<br />';
     }

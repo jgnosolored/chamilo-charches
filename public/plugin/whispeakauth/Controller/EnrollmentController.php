@@ -4,38 +4,35 @@
 namespace Chamilo\PluginBundle\WhispeakAuth\Controller;
 
 use Chamilo\PluginBundle\WhispeakAuth\Request\ApiRequest;
-use ChamiloSession;
-use Display;
-use Exception;
-use Template;
-use WhispeakAuthPlugin;
 
 /**
  * Class EnrollmentController.
+ *
+ * @package Chamilo\PluginBundle\WhispeakAuth\Controller
  */
 class EnrollmentController extends BaseController
 {
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function index()
     {
         if (!$this->plugin->toolIsEnabled()) {
-            throw new Exception(get_lang('NotAllowed'));
+            throw new \Exception(get_lang('NotAllowed'));
         }
 
         $user = api_get_user_entity(api_get_user_id());
 
-        $userIsEnrolled = WhispeakAuthPlugin::checkUserIsEnrolled($user->getId());
+        $userIsEnrolled = \WhispeakAuthPlugin::checkUserIsEnrolled($user->getId());
 
         if ($userIsEnrolled) {
-            throw new Exception($this->plugin->get_lang('SpeechAuthAlreadyEnrolled'));
+            throw new \Exception($this->plugin->get_lang('SpeechAuthAlreadyEnrolled'));
         }
 
         $request = new ApiRequest();
         $response = $request->createEnrollmentSessionToken($user);
 
-        ChamiloSession::write(WhispeakAuthPlugin::SESSION_SENTENCE_TEXT, $response['token']);
+        \ChamiloSession::write(\WhispeakAuthPlugin::SESSION_SENTENCE_TEXT, $response['token']);
 
         $this->displayPage(
             true,
@@ -47,32 +44,49 @@ class EnrollmentController extends BaseController
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function ajax()
     {
+        $result = ['resultHtml' => ''];
+
         if (!$this->plugin->toolIsEnabled() || empty($_FILES['audio'])) {
-            throw new Exception(get_lang('NotAllowed'));
+            throw new \Exception(get_lang('NotAllowed'));
         }
 
         $user = api_get_user_entity(api_get_user_id());
 
         $audioFilePath = $this->uploadAudioFile($user);
 
-        $token = ChamiloSession::read(WhispeakAuthPlugin::SESSION_SENTENCE_TEXT);
+        $token = \ChamiloSession::read(\WhispeakAuthPlugin::SESSION_SENTENCE_TEXT);
 
         if (empty($token)) {
-            throw new Exception($this->plugin->get_lang('EnrollmentFailed'));
+            throw new \Exception($this->plugin->get_lang('EnrollmentFailed'));
         }
 
         $request = new ApiRequest();
-        $response = $request->createEnrollment($token, $audioFilePath, $user);
 
-        ChamiloSession::erase(WhispeakAuthPlugin::SESSION_SENTENCE_TEXT);
+        try {
+            $response = $request->createEnrollment($token, $audioFilePath, $user);
+        } catch (\Exception $exception) {
+            $enrollTokenRequest = new ApiRequest();
+            $enrollTokenResponse = $enrollTokenRequest->createEnrollmentSessionToken($user);
+
+            \ChamiloSession::write(\WhispeakAuthPlugin::SESSION_SENTENCE_TEXT, $enrollTokenResponse['token']);
+
+            return [
+                'resultHtml' => \Display::return_message($exception->getMessage(), 'error'),
+                'text' => $enrollTokenResponse['text'],
+            ];
+        }
+
+        \ChamiloSession::erase(\WhispeakAuthPlugin::SESSION_SENTENCE_TEXT);
 
         $this->plugin->saveEnrollment($user, $response['speaker']);
 
-        echo Display::return_message($this->plugin->get_lang('EnrollmentSuccess'), 'success');
+        $result['resultHtml'] .= \Display::return_message($this->plugin->get_lang('EnrollmentSuccess'), 'success');
+
+        return $result;
     }
 
     /**
@@ -87,7 +101,7 @@ class EnrollmentController extends BaseController
 
         $pageTitle = $this->plugin->get_lang('EnrollmentTitle');
 
-        $template = new Template($pageTitle);
+        $template = new \Template($pageTitle);
 
         foreach ($variables as $key => $value) {
             $template->assign($key, $value);

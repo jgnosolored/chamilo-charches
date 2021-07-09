@@ -10,6 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Class LogEvent.
  *
+ * @package Chamilo\PluginBundle\Entity\WhispeakAuth
+ *
  * @ORM\Table(name="whispeak_log_event")
  * @ORM\Entity()
  * @ORM\InheritanceType("SINGLE_TABLE")

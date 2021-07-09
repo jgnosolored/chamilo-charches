@@ -10,6 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Class LogEventLp.
  *
+ * @package Chamilo\PluginBundle\Entity\WhispeakAuth
+ *
  * @ORM\Entity()
  */
 class LogEventLp extends LogEvent

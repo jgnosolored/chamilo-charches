@@ -3,16 +3,16 @@
 
 use Chamilo\CoreBundle\Entity\ExtraField;
 use Chamilo\CoreBundle\Entity\ExtraFieldValues;
-use Chamilo\CoreBundle\Entity\User;
 use Chamilo\PluginBundle\Entity\WhispeakAuth\LogEvent;
 use Chamilo\PluginBundle\Entity\WhispeakAuth\LogEventLp;
 use Chamilo\PluginBundle\Entity\WhispeakAuth\LogEventQuiz;
+use Chamilo\UserBundle\Entity\User;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class WhispeakAuthPlugin.
  */
-class WhispeakAuthPlugin extends Plugin implements \Chamilo\CoreBundle\Hook\Interfaces\HookPluginInterface
+class WhispeakAuthPlugin extends Plugin implements HookPluginInterface
 {
     const SETTING_ENABLE = 'enable';
     const SETTING_MAX_ATTEMPTS = 'max_attempts';

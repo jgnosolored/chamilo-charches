@@ -1,5 +1,4 @@
 <?php
-
 /* For license terms, see /license.txt */
 
 require_once __DIR__.'/../../main/inc/global.inc.php';
@@ -32,11 +31,10 @@ switch ($action) {
                 'author_id' => api_get_user_id(),
             ];
             Database::insert('learning_calendar', $params);
-            Display::addFlash(Display::return_message(get_lang('Saved..')));
+            Display::addFlash(Display::return_message(get_lang('Saved')));
             header('Location: start.php');
             exit;
         }
-
         break;
     case 'edit':
         $form = new FormValidator('calendar', 'post', api_get_self().'?action=edit&id='.$calendarId);
@@ -61,16 +59,15 @@ switch ($action) {
                 'description' => $values['description'],
             ];
             Database::update('learning_calendar', $params, ['id = ?' => $calendarId]);
-            Display::addFlash(Display::return_message(get_lang('Update successful')));
+            Display::addFlash(Display::return_message(get_lang('Updated')));
             header('Location: start.php');
             exit;
         }
-
         break;
     case 'copy':
         $result = $plugin->copyCalendar($calendarId);
         if ($result) {
-            Display::addFlash(Display::return_message(get_lang('Saved..')));
+            Display::addFlash(Display::return_message(get_lang('Saved')));
         }
         header('Location: start.php');
         exit;
@@ -83,18 +80,16 @@ switch ($action) {
         }
         header('Location: start.php');
         exit;
-
         break;
     case 'toggle_visibility':
         $itemId = isset($_REQUEST['lp_item_id']) ? $_REQUEST['lp_item_id'] : 0;
         $lpId = isset($_REQUEST['lp_id']) ? $_REQUEST['lp_id'] : 0;
         $plugin->toggleVisibility($itemId);
-        Display::addFlash(Display::return_message(get_lang('Update successful')));
+        Display::addFlash(Display::return_message(get_lang('Updated')));
         $url = api_get_path(WEB_CODE_PATH).
             'lp/lp_controller.php?action=add_item&type=step&lp_id='.$lpId.'&'.api_get_cidreq();
         header("Location: $url");
         exit;
-
         break;
 }
 
@@ -103,9 +98,9 @@ $htmlHeadXtra[] = api_get_jqgrid_js();
 $url = api_get_path(WEB_AJAX_PATH).'model.ajax.php?a=get_learning_path_calendars';
 $columns = [
     get_lang('Title'),
-    get_lang('Total hours'),
-    get_lang('Minutes per day'),
-    get_lang('Detail'),
+    get_lang('TotalHours'),
+    get_lang('MinutesPerDay'),
+    get_lang('Actions'),
 ];
 
 $columnModel = [

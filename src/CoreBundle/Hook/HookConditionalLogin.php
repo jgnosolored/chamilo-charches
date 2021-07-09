@@ -1,32 +1,28 @@
 <?php
-
 /* For licensing terms, see /license.txt */
-
-namespace Chamilo\CoreBundle\Hook;
-
-use Chamilo\CoreBundle\Hook\Interfaces\HookConditionalLoginEventInterface;
-use Chamilo\CoreBundle\Hook\Interfaces\HookConditionalLoginObserverInterface;
-use Doctrine\ORM\EntityManager;
 
 /**
  * Class HookConditionalLogin.
- *
  * Hook to implement Conditional Login.
  */
 class HookConditionalLogin extends HookEvent implements HookConditionalLoginEventInterface
 {
     /**
      * HookConditionalLogin constructor.
+     *
+     * @throws Exception
      */
-    protected function __construct(EntityManager $entityManager)
+    protected function __construct()
     {
-        parent::__construct('HookConditionalLogin', $entityManager);
+        parent::__construct('HookConditionalLogin');
     }
 
     /**
      * Notify to all hook observers.
+     *
+     * @return array
      */
-    public function notifyConditionalLogin(): array
+    public function notifyConditionalLogin()
     {
         $conditions = [];
 

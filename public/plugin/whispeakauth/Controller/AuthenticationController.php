@@ -8,26 +8,23 @@ use Chamilo\PluginBundle\WhispeakAuth\Request\ApiRequest;
 use Chamilo\UserBundle\Entity\User;
 use ChamiloSession;
 use Display;
-use Exception;
-use Exercise;
-use learnpath;
 use Login;
-use Template;
-use UserManager;
 use WhispeakAuthPlugin;
 
 /**
  * Class AuthenticationController.
+ *
+ * @package Chamilo\PluginBundle\WhispeakAuth\Controller
  */
 class AuthenticationController extends BaseController
 {
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function index()
     {
         if (!$this->plugin->toolIsEnabled()) {
-            throw new Exception(get_lang('NotAllowed'));
+            throw new \Exception(get_lang('NotAllowed'));
         }
 
         /** @var array $lpQuestionInfo */
@@ -51,9 +48,9 @@ class AuthenticationController extends BaseController
 
         /** @var array $lpItemInfo */
         $lpItemInfo = ChamiloSession::read(WhispeakAuthPlugin::SESSION_LP_ITEM, []);
-        /** @var learnpath $oLp */
+        /** @var \learnpath $oLp */
         $oLp = ChamiloSession::read('oLP', null);
-        /** @var Exercise $objExercise */
+        /** @var \Exercise $objExercise */
         $objExercise = ChamiloSession::read('objExercise', null);
 
         $isAuthOnLp = !empty($lpItemInfo) && !empty($oLp);
@@ -98,7 +95,7 @@ class AuthenticationController extends BaseController
         ChamiloSession::write(WhispeakAuthPlugin::SESSION_SENTENCE_TEXT, $response['token']);
 
         if (!empty($lpQuestionInfo) && empty($lpItemInfo)) {
-            $template = new Template('', $showFullPage, $showFullPage, false, true, false);
+            $template = new \Template('', $showFullPage, $showFullPage, false, true, false);
             $template->assign('show_form', $showForm);
             $template->assign('sample_text', $response['text']);
 
@@ -116,12 +113,14 @@ class AuthenticationController extends BaseController
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function ajax()
     {
         $userId = api_get_user_id();
         $user2fa = ChamiloSession::read(WhispeakAuthPlugin::SESSION_2FA_USER, 0);
+
+        $result = [];
 
         if (!empty($user2fa) || !empty($userId)) {
             $isAllowed = !empty($_FILES['audio']);
@@ -130,7 +129,7 @@ class AuthenticationController extends BaseController
         }
 
         if (!$isAllowed || !$this->plugin->toolIsEnabled()) {
-            throw new Exception(get_lang('NotAllowed'));
+            throw new \Exception(get_lang('NotAllowed'));
         }
 
         if (!empty($user2fa)) {
@@ -139,11 +138,11 @@ class AuthenticationController extends BaseController
             $user = api_get_user_entity($userId);
         } else {
             /** @var User|null $user */
-            $user = UserManager::getRepository()->findOneBy(['username' => $_POST['username']]);
+            $user = \UserManager::getRepository()->findOneBy(['username' => $_POST['username']]);
         }
 
         if (!$user) {
-            throw new Exception(get_lang('NotFound'));
+            throw new \Exception(get_lang('NotFound'));
         }
 
         $audioFilePath = $this->uploadAudioFile($user);
@@ -152,22 +151,33 @@ class AuthenticationController extends BaseController
         $maxAttempts = $this->plugin->getMaxAttempts();
 
         if ($maxAttempts && $failedLogins >= $maxAttempts) {
-            throw new Exception($this->plugin->get_lang('MaxAttemptsReached'));
+            throw new \Exception($this->plugin->get_lang('MaxAttemptsReached'));
         }
 
-        $token = ChamiloSession::read(WhispeakAuthPlugin::SESSION_SENTENCE_TEXT);
+        $token = \ChamiloSession::read(\WhispeakAuthPlugin::SESSION_SENTENCE_TEXT);
 
-        $request = new ApiRequest();
-        $success = $request->performAuthentication($token, $user, $audioFilePath);
-
-        ChamiloSession::erase(WhispeakAuthPlugin::SESSION_SENTENCE_TEXT);
+        \ChamiloSession::erase(\WhispeakAuthPlugin::SESSION_SENTENCE_TEXT);
 
         /** @var array $lpItemInfo */
         $lpItemInfo = ChamiloSession::read(WhispeakAuthPlugin::SESSION_LP_ITEM, []);
         /** @var array $quizQuestionInfo */
         $quizQuestionInfo = ChamiloSession::read(WhispeakAuthPlugin::SESSION_QUIZ_QUESTION, []);
 
-        $message = $this->plugin->get_lang('AuthentifySuccess');
+        $success = true;
+
+        $request = new ApiRequest();
+
+        try {
+            $request->performAuthentication($token, $user, $audioFilePath);
+
+            $message = $this->plugin->get_lang('AuthentifySuccess');
+        } catch (\Exception $exception) {
+            $message = $this->plugin->get_lang('AuthentifyFailed')
+                .PHP_EOL
+                .$exception->getMessage();
+
+            $success = false;
+        }
 
         if (!$success) {
             if (!empty($lpItemInfo)) {
@@ -192,15 +202,25 @@ class AuthenticationController extends BaseController
                 $this->plugin->addAuthenticationAttempt(LogEvent::STATUS_FAILED, $user->getId());
             }
 
-            $message = $this->plugin->get_lang('AuthentifyFailed');
+            $authTokenRequest = new ApiRequest();
+            $authTokenResponse = $authTokenRequest->createAuthenticationSessionToken($user);
+
+            if (empty($authTokenResponse['text'])) {
+                $varNumber = mt_rand(1, 6);
+                $authTokenResponse['text'] = $this->plugin->get_lang("AuthentifySampleText$varNumber");
+            }
+
+            $result['text'] = $authTokenResponse['text'];
+
+            ChamiloSession::write(WhispeakAuthPlugin::SESSION_SENTENCE_TEXT, $authTokenResponse['token']);
 
             ChamiloSession::write(WhispeakAuthPlugin::SESSION_FAILED_LOGINS, ++$failedLogins);
 
             if ($maxAttempts && $failedLogins >= $maxAttempts) {
                 $message .= PHP_EOL
                     .'<span data-reach-attempts="true">'.$this->plugin->get_lang('MaxAttemptsReached').'</span>'
-                    .PHP_EOL
-                    .'<br><strong>'
+                    .PHP_EOL.PHP_EOL
+                    .'<strong>'
                     .$this->plugin->get_lang('LoginWithUsernameAndPassword')
                     .'</strong>';
 
@@ -213,7 +233,7 @@ class AuthenticationController extends BaseController
                 $message .= PHP_EOL.$this->plugin->get_lang('TryAgain');
 
                 if ('true' === api_get_setting('allow_lostpassword')) {
-                    $message .= '<br>'
+                    $message .= PHP_EOL
                         .Display::url(
                             get_lang('LostPassword'),
                             api_get_path(WEB_CODE_PATH).'auth/lostPassword.php',
@@ -223,8 +243,8 @@ class AuthenticationController extends BaseController
             }
         }
 
-        echo Display::return_message(
-            $message,
+        $result['resultHtml'] = Display::return_message(
+            nl2br($message),
             $success ? 'success' : 'warning',
             false
         );
@@ -233,11 +253,11 @@ class AuthenticationController extends BaseController
             ChamiloSession::erase(WhispeakAuthPlugin::SESSION_FAILED_LOGINS);
 
             if (!empty($lpItemInfo)) {
-                echo '<script>window.location.href = "'
+                $result['resultHtml'] .= '<script>window.location.href = "'
                     .api_get_path(WEB_PLUGIN_PATH)
                     .'whispeakauth/authentify_password.php";</script>';
 
-                exit;
+                return $result;
             }
 
             if (!empty($quizQuestionInfo)) {
@@ -245,14 +265,14 @@ class AuthenticationController extends BaseController
 
                 ChamiloSession::write(WhispeakAuthPlugin::SESSION_AUTH_PASSWORD, true);
 
-                echo "<script>window.location.href = '".$url."';</script>";
+                $result['resultHtml'] .= "<script>window.location.href = '".$url."';</script>";
 
-                exit;
+                return $result;
             }
 
-            echo '<script>window.location.href = "'.api_get_path(WEB_PATH).'";</script>';
+            $result['resultHtml'] .= '<script>window.location.href = "'.api_get_path(WEB_PATH).'";</script>';
 
-            exit;
+            return $result;
         }
 
         if ($success) {
@@ -270,9 +290,9 @@ class AuthenticationController extends BaseController
                     $lpItemInfo['lp']
                 );
 
-                echo '<script>window.location.href = "'.$lpItemInfo['src'].'";</script>';
+                $result['resultHtml'] .= '<script>window.location.href = "'.$lpItemInfo['src'].'";</script>';
 
-                exit;
+                return $result;
             }
 
             if (!empty($quizQuestionInfo)) {
@@ -288,9 +308,9 @@ class AuthenticationController extends BaseController
                     $quizQuestionInfo['quiz']
                 );
 
-                echo '<script>window.location.href = "'.$url.'";</script>';
+                $result['resultHtml'] .= '<script>window.location.href = "'.$url.'";</script>';
 
-                exit;
+                return $result;
             }
 
             if (empty($lpItemInfo) && empty($quizQuestionInfo)) {
@@ -311,8 +331,12 @@ class AuthenticationController extends BaseController
             ChamiloSession::write('_user', $loggedUser);
             Login::init_user($user->getId(), true);
 
-            echo '<script>window.location.href = "'.api_get_path(WEB_PATH).'";</script>';
+            $result['resultHtml'] .= '<script>window.location.href = "'.api_get_path(WEB_PATH).'";</script>';
+
+            return $result;
         }
+
+        return $result;
     }
 
     /**
@@ -327,7 +351,7 @@ class AuthenticationController extends BaseController
 
         $pageTitle = $this->plugin->get_title();
 
-        $template = new Template($pageTitle, $isFullPage, $isFullPage);
+        $template = new \Template($pageTitle, $isFullPage, $isFullPage, !$isFullPage);
 
         foreach ($variables as $key => $value) {
             $template->assign($key, $value);

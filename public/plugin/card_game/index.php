@@ -1,5 +1,4 @@
 <?php
-
 /* For license terms, see /license.txt */
 
 use ChamiloSession as Session;
@@ -10,6 +9,8 @@ use ChamiloSession as Session;
  * pre_footer region (a mandatory step of the installation).
  *
  * @author Damien Renou
+ *
+ * @package chamilo.plugin.card_game
  */
 require_once __DIR__.'/../../main/inc/global.inc.php';
 
@@ -44,7 +45,7 @@ if (!api_is_anonymous()) {
             $sqlCount = "SELECT access_date FROM plugin_card_game WHERE user_id = $userId";
             $resultCount = Database::query($sqlCount)->rowCount();
 
-            if (0 === $resultCount) {
+            if ($resultCount === 0) {
                 // If there is no database entry for this user, insert one
                 // without the 'parts' field (because he has not played yet)
                 // @todo change date call
@@ -62,7 +63,7 @@ if (!api_is_anonymous()) {
                           AND user_id = $userId";
                 $resultDate = Database::query($sqlDate)->rowCount();
 
-                if (0 == $resultDate) {
+                if ($resultDate == 0) {
                     // If there are records, but none for today, set the
                     // 'cardgame' session variable and add the
                     // #havedeckcardgame element to the page (it will get

@@ -54,6 +54,7 @@ class Positioning extends Plugin
     {
         $table = $this->table;
         Database::query("DROP TABLE IF EXISTS $table");
+        $this->uninstall_course_fields_in_all_courses();
     }
 
     public function isInitialExercise($exerciseId, $courseId, $sessionId)
@@ -172,7 +173,7 @@ class Positioning extends Plugin
         }
 
         $data = $this->getPositionData($exerciseId, $courseId, $sessionId);
-        $disableField = 'is_initial' === $field ? 'is_final' : 'is_initial';
+        $disableField = $field === 'is_initial' ? 'is_final' : 'is_initial';
         if ($data && isset($data['id'])) {
             $id = $data['id'];
             $sql = "UPDATE $this->table SET

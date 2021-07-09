@@ -81,7 +81,7 @@ class ExerciseSignaturePlugin extends Plugin
         $userId = (int) $userId;
         if (isset($trackInfo['exe_id']) && isset($trackInfo['exe_user_id']) &&
             !empty($trackInfo['exe_id']) && !empty($trackInfo['exe_user_id']) &&
-            'incomplete' !== $trackInfo['status']
+            $trackInfo['status'] !== 'incomplete'
         ) {
             if ($userId === (int) $trackInfo['exe_user_id']) {
                 return true;
@@ -125,7 +125,7 @@ class ExerciseSignaturePlugin extends Plugin
     {
         $extraField = new ExtraField('exercise');
         $extraFieldHandler = $extraField->get_handler_field_info_by_field_variable('signature_activated');
-        $exists = false !== $extraFieldHandler;
+        $exists = $extraFieldHandler !== false;
 
         if (!$exists) {
             $extraField->save(
@@ -143,7 +143,7 @@ class ExerciseSignaturePlugin extends Plugin
         }
 
         $extraFieldHandler = $extraField->get_handler_field_info_by_field_variable('signature_mandatory');
-        $exists = false !== $extraFieldHandler;
+        $exists = $extraFieldHandler !== false;
 
         if (!$exists) {
             $extraField->save(
@@ -162,7 +162,7 @@ class ExerciseSignaturePlugin extends Plugin
 
         $extraField = new ExtraField('track_exercise');
         $extraFieldHandler = $extraField->get_handler_field_info_by_field_variable('signature');
-        $exists = false !== $extraFieldHandler;
+        $exists = $extraFieldHandler !== false;
 
         if (!$exists) {
             $extraField->save(

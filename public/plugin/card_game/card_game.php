@@ -1,5 +1,4 @@
 <?php
-
 /* For licensing terms, see /license.txt */
 
 /**
@@ -7,6 +6,8 @@
  * install/uninstall the plugin.
  *
  * @author Damien Renou
+ *
+ * @package chamilo.plugin.card_game
  */
 class CardGame extends Plugin
 {
@@ -25,26 +26,26 @@ class CardGame extends Plugin
     {
         static $result = null;
 
-        return $result ?: $result = new self();
+        return $result ? $result : $result = new self();
     }
 
     public function install()
     {
         // 'pan' is the ID of the current background image/panel
-        $sql = 'CREATE TABLE IF NOT EXISTS plugin_card_game(
+        $sql = "CREATE TABLE IF NOT EXISTS plugin_card_game(
             id INT NOT NULL AUTO_INCREMENT,
             user_id INT NOT NULL,
             pan int NOT NULL,
             access_date DATE NOT NULL,
             parts VARCHAR(500) NOT NULL,
             PRIMARY KEY (id)
-        )';
+        )";
         Database::query($sql);
     }
 
     public function uninstall()
     {
-        $sql = 'DROP TABLE IF EXISTS plugin_card_game';
+        $sql = "DROP TABLE IF EXISTS plugin_card_game";
         Database::query($sql);
     }
 }
