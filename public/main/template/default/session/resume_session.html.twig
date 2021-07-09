@@ -1,0 +1,123 @@
+{% extends "@ChamiloCore/Layout/layout_one_col.html.twig" %}
+
+{% block content %}
+{% autoescape false %}
+{{ session_header }}
+{{ title }}
+
+<table id="session-properties" class="table table-bordered">
+    <tr>
+        <td>{{ 'Created by'|get_lang }}</td>
+        <td>{{ session.sessionAdmin | user_complete_name_with_link }}</td>
+    </tr>
+    <tr>
+        <td>{{ 'General coach' | get_lang}} :</td>
+        <td>{{ session.generalCoach | user_complete_name_with_link }}</td>
+    </tr>
+    {% if session.category  %}
+    <tr>
+        <td>{{ 'Session category' | get_lang}} </td>
+        <td>{{ session.category.name }}</td>
+    </tr>
+    {% endif %}
+
+    {% if session.duration > 0 %}
+    <tr>
+        <td>{{ 'Duration' | get_lang}} </td>
+        <td>
+            {{ session.duration }} {{ 'Days' | get_lang }}
+        </td>
+    </tr>
+    {% else %}
+    <tr>
+        <td>{{ 'Dates shown' | get_lang}} </td>
+        <td>{{ session_dates.display }}</td>
+    </tr>
+    <tr>
+        <td>{{ 'Access dates for students' | get_lang}} </td>
+        <td>{{ session_dates.access }}</td>
+    </tr>
+    <tr>
+        <td>{{ 'Access dates for coaches' | get_lang}} </td>
+        <td>{{ session_dates.coach }}</td>
+    </tr>
+    {% endif %}
+
+    <tr>
+        <td>{{ 'Description' | get_lang}} </td>
+        <td>
+            {{ session.description }}
+        </td>
+    </tr>
+    <tr>
+        <td>{{ 'Show description' | get_lang}} </td>
+        <td>
+            {% if session.showDescription == 1 %}
+                {{ 'Yes' | get_lang}}
+            {% else %}
+                {{ 'No' | get_lang}}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td>{{ 'Visibility after end date' | get_lang}} </td>
+        <td>
+            {{ session_visibility }}
+        </td>
+    </tr>
+    {% if session.promotion %}
+        <tr>
+            <td>{{ 'Career' | get_lang}}</td>
+            <td>
+                <a href="{{ _p.web_main }}admin/career_dashboard.php?filter={{ session.promotion.career.id }}&submit=&_qf__filter_form=">
+                    {{ session.promotion.career.name }}
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td>{{ 'Promotion' | get_lang}}</td>
+            <td>
+                <a href="{{ _p.web_main }}admin/promotions.php?action=edit&id={{ session.promotion.id }}">
+                    {{ session.promotion.name }}
+                </a>
+            </td>
+        </tr>
+    {% endif %}
+
+    {% if url_list %}
+        <tr>
+            <td>URL</td>
+            <td>
+            {% for url in url_list %}
+                {{ url.url }}
+            {% endfor %}
+            </td>
+        </tr>
+    {% endif %}
+
+    {% for extra_field in extra_fields %}
+        <tr>
+            <td>{{ extra_field.text }}</td>
+            <td>{{ extra_field.value }}</td>
+        </tr>
+    {% endfor %}
+
+    {% if programmed_announcement %}
+        <tr>
+            <td>{{ 'Scheduled announcements' | get_lang }}</td>
+            <td>
+                <a class="btn btn-default" href="{{ _p.web_main }}session/scheduled_announcement.php?session_id={{ session.id }}">
+                    {{ 'Edit' | get_lang }}
+                </a>
+            </td>
+        </tr>
+    {% endif %}
+</table>
+
+{{ course_list }}
+{{ user_list }}
+
+{{ requirements }}
+{{ dependencies }}
+{% endautoescape %}
+{% endblock %}

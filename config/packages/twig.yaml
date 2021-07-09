@@ -1,0 +1,34 @@
+twig:
+    cache:
+        '%kernel.cache_dir%/twig'
+    paths:
+        - '%kernel.project_dir%/var/templates'
+        - '%kernel.project_dir%/public/main/template'
+        - '%kernel.project_dir%/public/plugin'
+        - '%kernel.project_dir%/src/CoreBundle/Resources/views/Layout'
+    form_themes:
+        - 'form-theme.html.twig'
+
+    globals:
+        software_name: Chamilo
+        messages_count:
+        message_link:
+        execution_stats:
+        course_session_block:
+        show_course_shortcut:
+        show_course_navigation_menu:
+        actions:
+        header:
+        message:
+        show_media_element: 1
+        footer_extra_content:
+        legacy_javascript:
+        section_name:
+        course:
+        session:
+        plugin_main_top:
+        plugin_content_top:
+        plugin_content_bottom:
+        plugin_main_bottom:
+        flash_messages:
+        shuffle_answers:

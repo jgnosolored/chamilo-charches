@@ -1,0 +1,10 @@
+{% extends '@ChamiloCore/Layout/base-layout.html.twig' %}
+
+{% block page_content %}
+    <div class="error-page">
+        <div class="error-content">
+            <h3>{{ 'Something seems to have gone wrong'|trans() }}</h3>
+            {{ exception.message }}
+        </div>
+    </div>
+{% endblock %}

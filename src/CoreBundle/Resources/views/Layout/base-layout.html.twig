@@ -1,0 +1,31 @@
+{% import "@ChamiloCore/Macros/box.html.twig" as macro_box %}
+{% import "@ChamiloCore/Macros/actions.html.twig" as macro_actions %}
+{% import "@ChamiloCore/Macros/buttons.html.twig" as macro_buttons %}
+{% import "@ChamiloCore/Macros/image.html.twig" as macro_image %}
+{% import '@ChamiloCore/Macros/headers.html.twig' as macro_headers %}
+{# Chamilo theme #}
+{% set theme = 'chamilo' %}
+{% if not from_vue %}
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}" class="no-js h-100">
+{% block chamilo_head %}
+<head>
+{%- include "@ChamiloCore/Layout/head.html.twig" %}
+</head>
+{% endblock %}
+<body class="font-sans antialiased {{ section_name }}">
+{#    data-course-id="{{ course ? course.id : 0 }}"#}
+{#    data-course-code="{{ course ? course.code : '' }}"#}
+{#    data-session-id="{{ session ? session.id : 0 }}"#}
+<noscript>{{ "Your browser does not support Javascript" | trans }}</noscript>
+{%- block chamilo_wrap -%}
+    {%- block page_content %}
+    {% endblock %}
+{% endblock -%}
+{%- block chamilo_footer -%}
+{% endblock -%}
+</body>
+</html>
+{% else %}
+    {{ block('page_content') }}
+{% endif %}

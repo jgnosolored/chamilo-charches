@@ -1,0 +1,76 @@
+{% block content %}
+    {% autoescape false %}
+        {% if list_not_category|length > 0 and list_in_category|length > 0 %}
+            <div class="link-page">
+                <ul class="list-group mb-3">
+                    {% for item in list_not_category %}
+                        <li class="list-group-item">
+                            <h5 class="link-title mb-1">
+                                {{ item.link_validator }}
+                                <a href="{{ item.url }}"
+                                   class="{{ item.visibility == true ? '' : 'text-muted' }}"
+                                   target="{{ item.target }}">{{ item.title }}</a>
+                                <div class="toolbar">
+                                    <div class="btn-group btn-group-sm">
+                                        {{ item.toolbar }}
+                                    </div>
+                                </div>
+                            </h5>
+                            {{ item.description }}
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                {% for item in list_in_category %}
+                    <div class="link-accordion accordion" id="accordion_category">
+                        <div class="card">
+                            <h5 class="card-header" id="heading_{{ item.id }}">
+                                <a class="title-card"
+                                   href="#" data-toggle="collapse"
+                                   data-target="#collapse_{{ item.id }}"
+                                   aria-expanded="true"
+                                   aria-controls="collapse_{{ item.id }}">
+                                    {{ item.title }}
+                                </a>
+                                <div class="float-right">
+                                    <div class="btn-group btn-group-sm">
+                                        {{ item.tools }}
+                                    </div>
+                                </div>
+                            </h5>
+                            <div id="collapse_{{ item.id }}" class="collapse show"
+                                 aria-labelledby="heading_{{ item.id }}"
+                                 data-parent="#accordion_category">
+                                <div class="card-body">
+                                    {{ item.description }}
+                                    <ul class="list-group">
+                                        {% for row in item.children %}
+                                            <li class="list-group-item list-group-item-action">
+                                                <h5 class="link-title mb-1">
+                                                    {{ row.link_validator }}
+                                                    <a href="{{ row.url }}"
+                                                       class="{{ row.visibility == true ? '' : 'text-muted' }}"
+                                                       target="{{ row.target }}">{{ row.title }}</a>
+                                                    <div class="toolbar">
+                                                        <div class="btn-group btn-group-sm">
+                                                            {{ row.toolbar }}
+                                                        </div>
+                                                    </div>
+                                                </h5>
+                                                {{ row.description }}
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                {{ 'There are no registered links'|trans }}
+            </div>
+        {% endif %}
+    {% endautoescape %}
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "@ChamiloCore/Layout/layout_one_col.html.twig" %}
+
+{% block content %}
+{% autoescape false %}
+    <div class="container">
+        <div class="row">
+        {% for category, items in tools %}
+            {% for item in items %}
+                {% set toolTitle = item.name | title | replace({'_': ' '}) | trans %}
+                <div class="items-tools col">
+                    <div class="tools mt-3 mb-3">
+                        <div class="big_icon">
+                            <a
+                                href="{{ url(
+                                    'chamilo_core_course_redirect_tool',
+                                    { 'toolName': item.name, 'cid': course.id, 'sid': session ? session.id : 0, })|raw
+                                }}"
+                            >
+                                <img alt="{{ item.name }}" src="{{ asset('img/tools/' ~ item.name ~ '.png')  }}" />
+                            </a>
+                        </div>
+                        <div class="content pt-2 pb-2">
+{#                            <a href=" {{ item.href|raw }}" >#}
+                                {{ toolTitle }}
+{#                            </a>#}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        </div>
+
+        {% for shortcut in shortcuts %}
+            <div class="items-tools">
+                <div class="tools mt-3 mb-3">
+                    {% set url %}
+                    {{-
+                        url('chamilo_core_resource_link', {
+                            'id': shortcut.shortCutNode.id,
+                            'cid': course.id,
+                            'sid': session ? session.id : 0,
+                            'type' : shortcut.shortCutNode.resourceType,
+                            'tool' : shortcut.shortCutNode.resourceType.tool,
+                        })
+                    -}}
+                    {% endset %}
+                    <div class="big_icon">
+                        <a href="{{ url }}">
+                            <img src="{{ asset('img/tools/' ~ shortcut.shortCutNode.resourceType.tool.name ~ '.png')  }}" />
+                        </a>
+                    </div>
+                    <div class="content pt-2 pb-2">
+                        <a href="{{ url }}">
+                            {{ shortcut.name }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endautoescape %}
+{% endblock %}

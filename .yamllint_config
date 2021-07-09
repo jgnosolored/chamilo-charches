@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 extends: default
 
 ignore: |
@@ -9,3 +10,16 @@ ignore: |
 rules:
   line-length:
     max: 800
+=======
+ignore: |
+    assets/*
+    .travis.yml
+    .codeclimate.yml
+    public/libs/*
+    public/plugin/test2pdf/*
+
+extends: default
+rules:
+  line-length:
+    max: 500
+>>>>>>> master

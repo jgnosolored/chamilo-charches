@@ -1,0 +1,191 @@
+{% import '@ChamiloCore/Macros/box.html.twig' as display %}
+
+{% autoescape false %}
+{% if title is defined %}
+    <h2 class="details-title"><img src="{{ 'course.png'|icon(32) }}"> {{ title }}</h2>
+{% endif %}
+
+<div class="page-header">
+    <h3>{{ user | user_complete_name }}</h3>
+</div>
+<!-- NO DETAILS -->
+{% if details != true %}
+    <div class="no-details">
+        {% set user_content %}
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="user text-center">
+                        <div class="avatar">
+                            <img width="128px" src="{{ user | illustration }}" class="img-responsive">
+                        </div>
+                        <div class="name">
+{#                            <h3>{{ user.complete_name_link }}</h3>#}
+                            <p class="email">{{ user.email }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    {{ display.reporting_user_details(user) }}
+                </div>
+                <div class="col-md-4">
+                    {{ display.card_widget('First login in platform'|trans, user_extra.first_connection, 'calendar') }}
+                    {{ display.card_widget('Latest login in platform'|trans, user_extra.last_connection, 'calendar') }}
+
+                    {% if user_extra.legal %}
+                        {{ display.card_widget('Legal accepted'|trans, user_extra.legal.datetime, 'gavel', user.legal.icon) }}
+                    {% endif %}
+                </div>
+            </div>
+        {% endset %}
+        {{ display.panel('', user_content) }}
+    </div>
+    <!-- DETAILS -->
+{% else %}
+    <div class="details">
+        <div class="row">
+            <div class="col-md-4">
+                {{ display.panel('', display.reporting_user_box(user), '') }}
+            </div>
+
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="easy-donut">
+                                    <div id="easypiechart-blue" title="{{ 'Progress'|trans }}" class="easypiechart"
+                                         data-percent="{{ user_extra.student_progress }}">
+                                        <span class="percent">{{ user_extra.student_progress }}%</span>
+                                    </div>
+                                    <div class="easypiechart-legend">
+                                        {{ 'Average progress in courses'|trans }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="easy-donut">
+                                    <div id="easypiechart-red" title="{{ 'Score'|trans }}" class="easypiechart"
+                                         data-percent="{{ user_extra.student_score }}">
+                                        <span class="percent">{{ user_extra.student_score }} </span>
+                                    </div>
+                                    <div class="easypiechart-legend">
+                                        {{ 'Average progress in courses'|trans }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card box-widget">
+                                    <div class="card-body">
+                                        <div class="stat-widget-five">
+                                            <i class="fa fa-globe" aria-hidden="true"></i>
+                                            {{ user_extra.tools.links }}
+                                            <div class="box-name">
+                                                {{ 'Links accessed'|trans }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card box-widget">
+                                    <div class="card-body">
+                                        <div class="stat-widget-five">
+                                            <i class="fa fa-download" aria-hidden="true"></i>
+                                            {{ user_extra.tools.documents }}
+                                            <div class="box-name">
+                                                {{ 'Documents'|trans }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card box-widget">
+                                    <div class="card-body">
+                                        <div class="stat-widget-five">
+                                            <i class="fas fa-pencil-alt" aria-hidden="true"></i>
+                                            {{ user_extra.tools.tasks }}
+                                            <div class="box-name">
+                                                {{ 'Assignments'|trans }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card box-widget">
+                                    <div class="card-body">
+                                        <div class="stat-widget-five">
+                                            <i class="fa fa-comments-o" aria-hidden="true"></i>
+                                            {{ user_extra.tools.messages }}
+                                            <div class="box-name">
+                                                {{ 'Number of posts for this user'|trans }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card box-widget">
+                                    <div class="card-body">
+                                        <div class="stat-widget-five">
+                                            <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                                            {{ user_extra.tools.upload_documents }}
+                                            <div class="box-name">
+                                                {{ 'Uploaded documents'|trans }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card box-widget">
+                                    <div class="card-body">
+                                        <div class="stat-widget-five">
+                                            <i class="fa fa-plug" aria-hidden="true"></i>
+                                            <span class="date" title="{{ user_extra.tools.chat_connection }}">
+                                        {% if user_extra.tools.chat_connection != '' %}
+                                            {{ user_extra.tools.chat_connection }}
+                                        {% else %}
+                                            {{ 'Not Registered'|trans }}
+                                        {% endif %}
+                                        </span>
+                                            <div class="box-name">
+                                                {{ 'Latest chat connection'|trans }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        {{ display.card_widget('First login in platform'|trans, user_extra.first_connection, 'calendar') }}
+                        {{ display.card_widget('Latest login in platform'|trans, user_extra.last_connection, 'calendar') }}
+                        {% if (user_extra.time_spent_course) %}
+                            {{ display.card_widget('Time spent in the course'|trans, user_extra.time_spent_course, 'clock-o') }}
+                        {% endif %}
+                        {% if user_extra.legal %}
+                            {{ display.card_widget('Legal accepted'|trans, user_extra.legal.datetime, 'gavel', user_extra.legal.icon) }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<script>
+    $(function () {
+        $('#easypiechart-blue').easyPieChart({
+            scaleColor: false,
+            barColor: '#30a5ff',
+            lineWidth: 8,
+            trackColor: '#f2f2f2'
+        });
+
+        $('#easypiechart-red').easyPieChart({
+            scaleColor: false,
+            barColor: '#f9243f',
+            lineWidth: 8,
+            trackColor: '#f2f2f2'
+        });
+    });
+</script>
+{% endautoescape %}

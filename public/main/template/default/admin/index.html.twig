@@ -1,0 +1,86 @@
+{% import '@ChamiloCore/Macros/box.html.twig' as display %}
+
+{% set admin_chamilo_announcements_disable = 'admin_chamilo_announcements_disable'|api_get_configuration_value %}
+
+{% block content %}
+    {% autoescape false %}
+        {% if not admin_chamilo_announcements_disable %}
+            <div class="alert alert-info alert-dismissible fade d-none" role="alert" style="display: none">
+                <button type="button" class="close" data-dismiss="alert" aria-label="{{ 'Close'|trans }}">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <div id="chamilo-news-content"></div>
+            </div>
+        {% endif %}
+
+        <div id="settings" class="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 ">
+            {% for block_item in blocks_admin %}
+                <div id="tabs-{{ loop.index }}" class="" >
+                    {% set list %}
+                        {% if block_item.description is defined %}
+                            {{ block_item.description }}
+                        {% endif %}
+
+                        {% if block_item.items is not empty %}
+                            <ul class="list-group">
+                                {% for url in block_item.items %}
+                                    {% if url.url is not empty %}
+                                        <li class="list-group-item">
+                                            <a href="{{ url.url }}">
+                                                {{ url.label }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        {% if block_item.extra is not null %}
+                            <div>
+                                {{ block_item.extra }}
+                            </div>
+                        {% endif %}
+                    {% endset %}
+
+                    {{ display.panel(block_item.icon ~ block_item.label, block_item.search_form ~  list) }}
+                </div>
+            {% endfor %}
+
+{#            <div class="row">#}
+{#                {% for role in app.user.roles %}#}
+{#                    {% set role = role | lower | replace ({ 'role_' : ''}) %}#}
+{#                    {% if role in ['global_admin'] %}#}
+{#                        {% include '@ChamiloCore/Admin/' ~ role ~ '/role_index.html.twig' %}#}
+{#                    {% endif %}#}
+{#                {% endfor %}#}
+{#            </div>#}
+        </div>
+
+        {% if is_granted('ROLE_ADMIN') %}
+            <script>
+                $(function () {
+                    $.ajax({
+                        url: '{{ web_admin_ajax_url }}?a=version',
+                        success: function (version) {
+                            $(".admin-block-version").html(version);
+                        }
+                    });
+
+                    {% if not admin_chamilo_announcements_disable %}
+                        $('#chamilo-news-content').load(
+                            '{{ web_admin_ajax_url }}?a=get_latest_news',
+                            function (response) {
+                                if (!response.length) {
+                                    return;
+                                }
+                                $('#chamilo-news-content').parent().show();
+                                $(this).parent().removeClass('d-none');
+                            }
+                        );
+
+                    {% endif %}
+                });
+            </script>
+
+        {% endif %}
+    {% endautoescape %}
+{% endblock %}

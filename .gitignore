@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #NSR
 /plugin/buycourses/resources/php/apiRedsys.php
 /plugin/buycourses/lang/spanish.php
@@ -7,10 +8,17 @@
 app/cache/*
 !app/cache/.gitkeep
 !app/cache/.htaccess
+=======
+# Chamilo 1.x
 
-app/logs/*
-!app/logs/.gitkeep
+app
+courses
+web/assets/*
+>>>>>>> master
 
+# Cache directories
+
+<<<<<<< HEAD
 # Chamilo configuration
 /app/config/parameters.yml
 /app/config/add_course.conf.php
@@ -24,12 +32,30 @@ app/logs/*
 # Courses
 app/courses/*
 !app/courses/proxy.php
+=======
+var/cache/*
+!var/cache/.gitkeep
 
-# Home
-app/home/*
+var/log/*
+!var/log/.gitkeep
+>>>>>>> master
+
+# Courses
+var/courses/*
+!var/courses/.gitkeep
 
 # Upload content
-app/upload/*
+var/upload/*
+!var/upload/.gitkeep
+
+/node_modules/
+
+# Chamilo configuration
+/config/configuration.php
+/main/inc/conf/configuration.php
+
+# Home
+components/*
 
 .php_cs.cache
 
@@ -46,14 +72,58 @@ app/upload/*
 nbproject/*
 
 # Plugins config files
-plugin/bbb/config.vm.php
+public/plugin/bbb/config.vm.php
 
 # Cron temp files
-main/cron/incoming/*
-plugin/vchamilo/templates/*
+public/main/cron/incoming/*
+public/plugin/vchamilo/templates/*
 
 # Stuff updated through composer - Remove just before release
+<<<<<<< HEAD
 /vendor
 web/
 node_modules
 yarn.lock
+=======
+vendor
+composer.lock
+symfony.lock
+
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+###> symfony/phpunit-bridge ###
+.phpunit
+.phpunit.result.cache
+/phpunit.xml
+###< symfony/phpunit-bridge ###
+###> symfony/webpack-encore-bundle ###
+/node_modules/
+/public/assets/
+/public/build/
+/public/js/
+npm-debug.log
+yarn-error.log
+###< symfony/webpack-encore-bundle ###
+.yarn/*
+.yarn/cache
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+
+###> lexik/jwt-authentication-bundle ###
+/config/jwt/*.pem
+###< lexik/jwt-authentication-bundle ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###
+>>>>>>> master

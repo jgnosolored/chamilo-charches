@@ -14,6 +14,7 @@ $rules = [
     'blank_line_after_opening_tag' => false,
     'no_extra_consecutive_blank_lines' => true,
     'multiline_comment_opening_closing' => true,
+<<<<<<< HEAD
     'yoda_style' => false,
     'phpdoc_to_comment' => false,
     'phpdoc_no_package' => false,
@@ -21,10 +22,17 @@ $rules = [
     'increment_style' => ['style' => 'post'],
     'no_useless_else' => false,
     //'no_php4_constructor' => true,
+=======
+    'phpdoc_to_comment' => false,
+    'phpdoc_annotation_without_dot' => false,
+    'increment_style' => ['style' => 'post'],
+    'no_useless_else' => false,
+>>>>>>> master
     'single_quote' => false,
     'no_useless_return' => true,
     'ordered_class_elements' => true,
     'ordered_imports' => true,
+<<<<<<< HEAD
     'phpdoc_order' => true,
     'no_break_comment' => true,
     //'@PHP56Migration' => true,
@@ -86,6 +94,45 @@ $finder = PhpCsFixer\Finder::create()
     ->notPath('main/admin/db.php')
     ->notPath('main/admin/ldap_synchro.php')
     ->notPath('main/chat/emoji_strategy.php')
+=======
+    //'phpdoc_order' => true,
+    'no_break_comment' => true,
+    'global_namespace_import' => true,
+];
+
+$finder = PhpCsFixer\Finder::create()
+    ->exclude('assets')
+    ->exclude('bin')
+    ->exclude('public/main/inc/lib/javascript')
+    ->exclude('public/main/inc/lib/kses-0.2.2')
+    ->exclude('public/main/inc/lib/mimetex')
+    ->exclude('public/main/inc/lib/nusoap')
+    ->exclude('public/main/inc/lib/opengraph')
+    ->exclude('public/main/inc/lib/ppt2png')
+    ->exclude('public/main/inc/lib/pear')
+    ->exclude('public/main/inc/lib/xajax')
+    ->exclude('public/main/lp/packaging')
+    ->exclude('public/main/template')
+    ->exclude('public/main/lang')
+    ->exclude('public/plugin/buycourses/src/Culqi')
+    ->exclude('public/plugin/buycourses/src/Requests')
+    ->exclude('public/plugin/vchamilo/cli')
+    ->exclude('public/plugin/pens/lib')
+    ->exclude('public/plugin/bbb/lib')
+    ->exclude('public/plugin/ims_lti')
+    ->exclude('public/plugin/sepe/src/wsse')
+    ->exclude('public/plugin/test2pdf/class')
+    ->exclude('public/plugin/jcapture/src')
+    ->exclude('public/plugin/jcapture/lib')
+    ->exclude('src/CoreBundle/Traits/Repository/ORM')
+    ->exclude('tests')
+    ->exclude('var')
+    ->exclude('vendor')
+
+    ->notPath('public/check.php')
+    ->notPath('public/main/admin/ldap_synchro.php')
+    ->notPath('public/main/chat/emoji_strategy.php')
+>>>>>>> master
     ->in(__DIR__)
 ;
 
@@ -93,4 +140,8 @@ return PhpCsFixer\Config::create()
     ->setRules(
         $rules
     )
+<<<<<<< HEAD
     ->setFinder($finder);
+=======
+    ->setFinder($finder);
+>>>>>>> master

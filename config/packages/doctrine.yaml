@@ -1,0 +1,61 @@
+doctrine:
+    dbal:
+        server-version: 'mariadb-10.2.12'
+        dbname: '%env(DATABASE_NAME)%'
+        user: '%env(DATABASE_USER)%'
+        password: '%env(DATABASE_PASSWORD)%'
+        host: '%env(DATABASE_HOST)%'
+        driver: 'pdo_mysql'
+        charset: utf8mb4
+        options:
+            1002: "SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))"
+        default_table_options:
+            charset: utf8mb4
+            collate: utf8mb4_unicode_ci
+            row_format: DYNAMIC
+        types:
+            json: Doctrine\DBAL\Types\JsonType
+            uuid: Symfony\Bridge\Doctrine\Types\UuidType
+            datetime: SimPod\DoctrineUtcDateTime\UTCDateTimeType
+            datetimetz: SimPod\DoctrineUtcDateTime\UTCDateTimeType
+            datetime_immutable: SimPod\DoctrineUtcDateTime\UTCDateTimeImmutableType
+            datetimetz_immutable: SimPod\DoctrineUtcDateTime\UTCDateTimeImmutableType
+    orm:
+        auto_generate_proxy_classes: true
+        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+        auto_mapping: true
+        query_cache_driver:
+            type: pool
+            pool: doctrine.system_cache_pool
+        result_cache_driver:
+            type: pool
+            pool: doctrine.result_cache_pool
+        mappings:
+            gedmo_translatable:
+                type: annotation
+                prefix: ChamiloCore\Entity\Translation
+                dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Translatable/Entity"
+                alias: GedmoTranslatable # (optional) it will default to the name set for the mapping
+                is_bundle: false
+            gedmo_translator:
+                type: annotation
+                prefix: Gedmo\Translator\Entity
+                dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Translator/Entity"
+                alias: GedmoTranslator # (optional) it will default to the name set for the mapping
+                is_bundle: false
+            gedmo_loggable:
+                type: annotation
+                prefix: Gedmo\Loggable\Entity
+                dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Loggable/Entity"
+                alias: GedmoLoggable # (optional) it will default to the name set for the mappingmapping
+                is_bundle: false
+            gedmo_tree:
+                type: annotation
+                prefix: Gedmo\Tree\Entity
+                dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Tree/Entity"
+                alias: GedmoTree # (optional) it will default to the name set for the mapping
+                is_bundle: false
+        dql:
+            string_functions:
+                MONTH: DoctrineExtensions\Query\Mysql\Month
+                YEAR: DoctrineExtensions\Query\Mysql\Year

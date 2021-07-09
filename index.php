@@ -1,5 +1,6 @@
 <?php
 /* For licensing terms, see /license.txt */
+<<<<<<< HEAD
 
 use ChamiloSession as Session;
 
@@ -208,3 +209,8 @@ Session::erase('session_id');
 Session::erase('id_session');
 Session::erase('studentview');
 api_remove_in_gradebook();
+=======
+echo 'Chamilo is not well configured. Change your apache/nginx vhost to point to the /public folder';
+
+exit;
+>>>>>>> master

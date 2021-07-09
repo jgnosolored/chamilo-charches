@@ -4,19 +4,28 @@ Feature: Profile page
   Background:
     Given I am a student
 
-  Scenario: Update profile with first name Andrew then restore Andrea
-    Given I am on "/main/auth/profile.php"
-    When I fill in the following:
-      | firstname | Andrew |
-    And I press "Save settings"
+  Scenario: Change user first name with Andrew then restore to Andrea
+    Given I am on "/account/home"
+    Then I should see "Profile"
+    Then I follow "Edit profile"
+    Then I fill in the following:
+      | profile_firstname | Andrew |
     And wait for the page to be loaded
+    And I press "update_profile"
+    And wait for the page to be loaded
+<<<<<<< HEAD
     Then I should see "Your new profile has been saved"
     Then I am on "/main/social/home.php"
     And I should see "Andrew"
     Then I am on "/main/auth/profile.php"
+=======
+    Then I should see "Updated"
+    And I should see "Andrew"
+    Then I follow "Edit profile"
+>>>>>>> master
     Then I fill in the following:
-      | firstname | Andrea |
-    And I press "Save settings"
-    Then I should see "Your new profile has been saved"
-    Then I am on "/main/social/home.php"
-    Then I should see "Andrea"
+      | profile_firstname | Andrea |
+    And I press "update_profile"
+    And wait for the page to be loaded
+    Then I should see "Updated"
+    And I should see "Andrea"

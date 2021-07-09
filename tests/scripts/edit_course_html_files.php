@@ -11,7 +11,10 @@
  * need to move it to an executable folder and change the first require.
  * @author Yannick Warnier <yannick.warnier@beeznest.com>
  */
+<<<<<<< HEAD
  exit;
+=======
+>>>>>>> master
 require __DIR__.'/../../main/inc/global.inc.php';
 api_protect_admin_script();
 

@@ -7,7 +7,11 @@ checks:
   file-lines:
     enabled: false
   method-complexity:
+<<<<<<< HEAD
     enabled: true
+=======
+    enabled: false
+>>>>>>> master
     config:
       threshold: 20
   method-count:
@@ -45,11 +49,19 @@ plugins:
         enabled: false
       Squiz Strings ConcatenationSpacing PaddingFound:
         enabled: false
+<<<<<<< HEAD
+=======
+      Symfony2 Commenting FunctionComment MissingReturn:
+        enabled: false
+      Symfony2 Commenting FunctionComment MissingParamTag:
+        enabled: false
+
+>>>>>>> master
   phpmd:
     enabled: true
     config:
       file_extensions: "php"
-      rulesets: "codesize.xml"
+      rulesets: "ruleset.xml"
 
   sonar-php:
     enabled: false
@@ -61,6 +73,7 @@ plugins:
     enabled: false
 
 exclude_patterns:
+<<<<<<< HEAD
 - cli-config.php
 - app/cache/
 - app/logs/
@@ -121,3 +134,41 @@ exclude_patterns:
 - tests/
 - vendor/
 - web/
+=======
+  - assets/*
+  - bin/*
+  - config/*
+  - public/main/admin/ldap_synchro.php
+  - public/main/chat/emoji_strategy.php
+  - public/main/inc/lib/browser/
+  - public/main/inc/lib/javascript/
+  - public/main/inc/lib/kses-0.2.2/
+  - public/main/inc/lib/mimetex/
+  - public/main/inc/lib/nusoap/
+  - public/main/inc/lib/opengraph/*
+  - public/main/inc/lib/ppt2png/
+  - public/main/inc/lib/pear/
+  - public/main/inc/lib/xajax/
+  - public/main/lp/packaging/
+  - public/main/template/
+  - public/main/lang/
+  - public/libs/
+  - public/img/
+  - public/plugin/buycourses/src/Culqi/
+  - public/plugin/buycourses/src/Requests/
+  - public/plugin/buycourses/src/Requests.php
+  - public/plugin/buycourses/src/paypalfunctions.php
+  - public/plugin/vchamilo/cli/
+  - public/plugin/pens/lib
+  - public/plugin/bbb/lib/bbb_api.php
+  - public/plugin/ims_lti/OAuthSimple.php
+  - public/plugin/sepe/src/wsse/
+  - public/plugin/test2pdf/class/
+  - public/plugin/jcapture/lib/
+  - public/plugin/jcapture/src/
+  - var/cache/
+  - var/log/
+  - tests/
+  - vendor/
+  - web/
+>>>>>>> master

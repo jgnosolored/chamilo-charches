@@ -1,0 +1,37 @@
+services:
+    _defaults:
+        autowire: true
+        public: true
+        autoconfigure: true
+
+    Vich\UploaderBundle\Storage\FlysystemStorage: ~
+    Chamilo\CoreBundle\Repository\ResourceNodeRepository: ~
+
+    # Classic entity repositories
+    Chamilo\CoreBundle\Repository\:
+        resource: '../../Repository'
+        exclude: '../../Repository/{Node,ResourceRepository.php,BranchSyncRepository.php}'
+        tags: ['doctrine.repository_service']
+
+    # Core repositories
+    Chamilo\CoreBundle\Repository\Node\:
+        resource: '../../Repository/Node'
+        calls:
+            - setAuthorizationChecker: ['@security.authorization_checker']
+            - setRouter: ['@router']
+            - setSlugify: ['@cocur_slugify']
+            - setToolChain: ['@Chamilo\CoreBundle\ToolChain']
+            - setResourceNodeRepository: ['@Chamilo\CoreBundle\Repository\ResourceNodeRepository']
+            - setRequestStack: ['@request_stack']
+        tags: ['doctrine.repository_service']
+
+    # User repository
+    Chamilo\CoreBundle\Repository\Node\UserRepository:
+        calls:
+            - setHasher: ['@security.user_password_hasher']
+            - setAuthorizationChecker: ['@security.authorization_checker']
+            - setRouter: ['@router']
+            - setSlugify: ['@cocur_slugify']
+            - setToolChain: ['@Chamilo\CoreBundle\ToolChain']
+            - setResourceNodeRepository: ['@Chamilo\CoreBundle\Repository\ResourceNodeRepository']
+            - setRequestStack: ['@request_stack']

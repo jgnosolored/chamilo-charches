@@ -7,32 +7,48 @@ Feature: Announcement tool
     And I am on course "TEMP" homepage
 
   Scenario: Create an announcement for admin user
-    Given I am on "/main/announcements/announcements.php?action=add&cidReq=TEMP"
+    Given I am on "/main/announcements/announcements.php?action=add&cid=1"
     When I fill in the following:
       | title   | Announcement test                       |
     And I press "choose_recipients"
     And I select "John Doe" from "users"
     And I press "add"
+<<<<<<< HEAD
     And I fill in ckeditor field "content" with "Announcement description"
+=======
+    And I fill in editor field "content" with "Announcement description"
+>>>>>>> master
     And I follow "Preview"
     And wait for the page to be loaded
     Then I should see "Announcement will be sent to"
     Then I press "submit"
+<<<<<<< HEAD
+=======
+    And wait for the page to be loaded
+>>>>>>> master
     Then I should see "Announcement has been added"
 
   Scenario: Create an announcement for all users
-    Given I am on "/main/announcements/announcements.php?action=add&cidReq=TEMP"
+    Given I am on "/main/announcements/announcements.php?action=add&cid=1"
     When I fill in the following:
       | title   | Announcement test                       |
+<<<<<<< HEAD
     And I fill in ckeditor field "content" with "Announcement description"
+=======
+    And I fill in editor field "content" with "Announcement description"
+>>>>>>> master
     And I follow "Preview"
     And wait for the page to be loaded
     Then I should see "Announcement will be sent to"
     Then I press "submit"
+<<<<<<< HEAD
+=======
+    And wait very long for the page to be loaded
+>>>>>>> master
     Then I should see "Announcement has been added"
 
-  Scenario: Delete all announcements
-    Given I am on "/main/announcements/announcements.php?cidReq=TEMP"
-    When I follow "Clear list of announcements"
-    And I confirm the popup
-    Then I should see "All announcements have been deleted"
+#  Scenario: Delete all announcements
+#    Given I am on "/main/announcements/announcements.php?cid=1"
+#    When I follow "Clear list of announcements"
+#    And I confirm the popup
+#    Then I should see "All announcements have been deleted"

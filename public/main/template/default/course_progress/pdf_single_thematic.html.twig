@@ -1,0 +1,39 @@
+{% autoescape false %}
+<table class="full-width border-thin">
+    <thead>
+    <tr>
+        <th width="30%" style="display:inline-block; padding: 10px; text-align: center; background-color: #E5E5E5;">{{ 'Thematic'|trans }}</th>
+        <th width="50%" style="display:inline-block; padding: 10px; text-align: center; background-color: #E5E5E5;">{{ 'Thematic plan'|trans }}</th>
+        <th width="20%" style="display:inline-block; padding: 10px; text-align: center; background-color: #E5E5E5;">{{ 'Thematic advance'|trans }}</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            <h4>{{ thematic.title }}</h4>
+            <br>
+            {{ thematic.content }}
+        </td>
+        <td>
+            {% for plan in thematic.plans %}
+                <br>
+                <h4>{{ plan.title }}</h4>
+                <br>
+                {{ plan.description }}
+            {% endfor %}
+        </td>
+        <td>
+            {% for advance in thematic.advances %}
+                <h4 style="margin-bottom: 10px;">
+                    {{ advance.duration }} {{ "hours" | trans }}
+                </h4>
+                <p>{{ advance.startDate|api_convert_and_format_date(2) }}</p>
+                {{ advance.content }}
+                <br>
+            {% endfor %}
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+{% endautoescape %}

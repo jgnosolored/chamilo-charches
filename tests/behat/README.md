@@ -20,6 +20,7 @@ Check the latest version at https://sites.google.com/a/chromium.org/chromedriver
 then adapt the following command to the latest version:
 
 ```
+<<<<<<< HEAD
 cd /tmp && wget https://chromedriver.storage.googleapis.com/85.0.4183.83/chromedriver_linux64.zip && unzip chromedriver_linux64.zip && sudo mv chromedriver /usr/local/bin
 ```
 
@@ -29,6 +30,9 @@ cd /tmp && wget https://chromedriver.storage.googleapis.com/85.0.4183.83/chromed
 ```
 chromedriver --version
 ChromeDriver 2.34.522913
+=======
+cd /tmp && wget https://chromedriver.storage.googleapis.com/2.35/chromedriver_linux64.zip && unzip chromedriver_linux64.zip && sudo mv chromedriver /usr/local/bin
+>>>>>>> master
 ```
 
 ### Chamilo configuration
@@ -45,7 +49,6 @@ ChromeDriver 2.34.522913
 - Social network tool must be available (allow_social_tool = true)
 - Student can register to the system (allow_registration = yes)
 - Teacher can register to the system (allow_registration_as_teacher = yes)
-- The CHECK_PASS_EASY_TO_FIND in app/config/profile.conf.php must be set to false
 
 ### Run tests
 

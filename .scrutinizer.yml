@@ -4,14 +4,19 @@ build:
             project_setup:
                 override: true
             tests:
+<<<<<<< HEAD
                 override:
                     - php-scrutinizer-run
+=======
+                override: [php-scrutinizer-run]
+>>>>>>> master
     tests:
         override:
             command: "php -v"
     dependencies:
         override:
             - "php -v"
+<<<<<<< HEAD
     resources:
         cpus: 1
     environment:
@@ -21,11 +26,15 @@ build:
                 memory_limit: "-1"
 
 
+=======
+
+>>>>>>> master
 checks:
     php: true
 
 filter:
     excluded_paths:
+<<<<<<< HEAD
         - 'cli-config.php'
         - 'app/cache/*'
         - 'app/logs/*'
@@ -84,6 +93,40 @@ filter:
         - 'plugin/test2pdf/class/*'
         - 'plugin/jcapture/lib/*'
         - 'plugin/jcapture/src/*'
+=======
+        - 'assets/*'
+        - 'bin/*'
+        - 'config/*'
+        - 'public/documentation/*'
+        - 'public/main/admin/ldap_synchro.php'
+        - 'public/main/chat/emoji_strategy.php'
+        - 'public/main/inc/lib/javascript/*'
+        - 'public/main/inc/lib/kses-0.2.2/*'
+        - 'public/main/inc/lib/mimetex/*'
+        - 'public/main/inc/lib/nusoap/*'
+        - 'public/main/inc/lib/opengraph/*'
+        - 'public/main/inc/lib/ppt2png/*'
+        - 'public/main/inc/lib/pear/*'
+        - 'public/main/inc/lib/xajax/*'
+        - 'public/main/lp/packaging/*'
+        - 'public/main/template/*'
+        - 'public/main/lang/*'
+        - 'public/plugin/buycourses/src/Culqi/*'
+        - 'public/plugin/buycourses/src/Requests/*'
+        - 'public/plugin/buycourses/src/paypalfunctions.php'
+        - 'public/plugin/buycourses/src/Requests.php'
+        - 'public/plugin/vchamilo/cli/*'
+        - 'public/plugin/pens/lib/'
+        - 'public/plugin/bbb/lib/bbb_api.php'
+        - 'public/plugin/ims_lti/OAuthSimple.php'
+        - 'public/plugin/sepe/src/wsse/*'
+        - 'public/plugin/test2pdf/class/*'
+        - 'public/plugin/jcapture/lib/*'
+        - 'public/plugin/jcapture/src/*'
+>>>>>>> master
         - 'tests/*'
+        - 'var/cache/*'
+        - 'var/log/*'
         - 'vendor/*'
-        - 'web/*'
+        - 'public/libs/*'
+        - 'public/img/*'

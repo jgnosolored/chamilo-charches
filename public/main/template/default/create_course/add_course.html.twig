@@ -1,0 +1,45 @@
+{% autoescape false %}
+    {% set name %}
+        {{ app.user.firstname }} {{ app.user.lastname }}
+    {% endset %}
+    <div class="row">
+        <div id="column-left" class="col-md-12">
+            {{ form }}
+        </div>
+        <div id="column-right" class="col-md-12">
+            <div id="preview_course_add_course" class="card" style="display: none; border: none; box-shadow: none;">
+                <div class="card-body">
+                    <div id="view-card-course" class="card card-view card-course mt-5 mb-3">
+                        <div class="card-image">
+                            <div class="category" style="display: none;">
+                            </div>
+                            <div class="doc-preview">
+                                <div class="img-preview preview-lg">
+
+                                </div>
+                                <div class="img-box" style="display: none;">
+                                    <img id="image-cut-lg" src="" class="preview-lg">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body p-3">
+
+                            <div class="card-title">
+                                <h5 id="title_course_card" class="title">
+                                </h5>
+                            </div>
+                            <div class="card-author mb-2">
+                                <i class="fa fa-graduation-cap" aria-hidden="true"></i>
+                                <span class="name">
+                                {{ name }}
+                            </span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endautoescape %}

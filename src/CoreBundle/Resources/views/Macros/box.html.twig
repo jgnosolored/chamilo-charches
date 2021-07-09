@@ -1,0 +1,189 @@
+{% macro collapse(name, title, content, list = false, expanded = 'true', title_right = '', title_icons = '') %}
+    {% autoescape false %}
+    <div class="panel-group" id="{{ name }}" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-default" id="{{ name }}_block">
+            <div class="panel-heading" role="tab">
+                {% if title_icons %}
+                    {{ title_icons }}
+                {% endif %}
+                <h4 class="panel-title">
+                    <a role="button"
+                       data-toggle="collapse"
+                       data-parent="#{{ name }}"
+                       href="#{{ name }}Collapse"
+                       aria-expanded="{{ expanded }}"
+                       aria-controls="{{ name }}Collapse">
+                        {{ title }}
+                    </a>
+                </h4>
+
+                {% if title_right %}
+                    <div class="pull-right">
+                        {{ title_right }}
+                    </div>
+                {% endif %}
+            </div>
+            <div
+                aria-expanded="{{ expanded }}"
+                id="{{ name }}Collapse"
+                class="panel-collapse collapse {{  expanded == 'true' ? 'in' : '' }}"
+                role="tabpanel">
+                <div class="panel-body">
+                    {% if list %}
+                        <ul class="nav nav-pills nav-stacked">
+                            {{ content }}
+                        </ul>
+                    {% else %}
+                        {{ content }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endautoescape %}
+{% endmacro %}
+
+{% macro panel(header, content, title, footer, subtitle, top_image) %}
+    {% autoescape false %}
+        <div class="card">
+            {% if header %}
+                <div class="text-h6 p-4 flex flex-row justify-between"> {{ header }} </div>
+            {% endif %}
+            {% if top_image %}
+                {{ top_image }}
+            {% endif %}
+            <div class="p-4">
+                {% if title %}
+                    <h5 class="card-title">{{ title }}</h5>
+                {% endif %}
+                {% if subtitle %}
+                    <h5 class="card-subtitle mb-2 text-muted">{{ subtitle }}</h5>
+                {% endif %}
+
+                {{ content }}
+            </div>
+            {% if footer %}
+                <div class="card-footer">
+                    {{ footer }}
+                </div>
+            {% endif %}
+        </div>
+    {% endautoescape %}
+{% endmacro %}
+
+{% macro avatar(image, size) %}
+    <div class="q-avatar" style="font-size: {{ size }}px;">
+        <div class="q-avatar__content row flex-center overflow-hidden">
+        {{ image }}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro box_widget(name, content, icon) %}
+    <div class="card">
+        <div class="card-body">
+            <div class="stat-widget-five">
+                <i class="fa fa-{{ icon }}" aria-hidden="true"></i>
+                {{ content }}
+                <div class="box-name">
+                    {{ name }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro card_widget(name, content, icon, extra) %}
+    <div class="card card-first-date">
+        <div class="card-body">
+            <div class="stat-widget-five">
+                <div class="stat-icon">
+                    <i class="fa fa-{{ icon }}" aria-hidden="true"></i>
+                    {% if extra %}
+                        <span class="active-icon">{{ extra }}</span>
+                    {% endif %}
+                </div>
+                <div class="stat-content">
+                    <div class="text-left">
+                        <div class="stat-text">
+                            {{ content }}
+                        </div>
+                        <div class="stat-heading">
+                            {{ name }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro reporting_user_details(user) %}
+    {% autoescape false %}
+    <div class="parameters">
+        <dl class="dl-horizontal">
+            {% if user.status %}
+                <dt>{{ 'Status'|trans }}</dt>
+
+                {% if user.status == 1 %}
+                    <dd>{{ 'Trainer' | trans }}</dd>
+                {% else %}
+                    <dd>{{ 'Learner' | trans }}</dd>
+                {% endif %}
+            {% endif %}
+
+            <dt>{{ 'Official code'|trans }}</dt>
+            {% if user.officialCode is defined %}
+                <dd>{{ user.officialCode }}</dd>
+            {% else %}
+                <dd>{{ 'No official code'|trans }}</dd>
+            {% endif %}
+            <dt>{{ 'OnLine'|trans }}</dt>
+            <dd>
+{#                {{ user.user_is_online }}#}
+{#                {{ user.online }}#}
+            </dd>
+            <dt>{{ 'Tel'|trans }}</dt>
+            <dd>{{ user.phone == '' ? 'NoTel'|trans : user.phone }}</dd>
+
+            {% if user.timezone is defined %}
+                <dt>{{ 'Timezone'|trans }}</dt>
+                <dd>{{ user.timezone }}</dd>
+            {% endif %}
+        </dl>
+
+{#        {% if user.created %}#}
+{#            <div class="create">{{ user.created }}</div>#}
+{#        {% endif %}#}
+
+{#        {% if user.url_access or user.legal.url_send %}#}
+{#            <div class="access">#}
+{#                {{ user.url_access }}#}
+{#                {{ user.legal.url_send }}#}
+{#            </div>#}
+{#        {% endif %}#}
+    </div>
+    {% endautoescape %}
+{% endmacro %}
+
+{% macro reporting_user_box(user) %}
+    {% autoescape false %}
+    {% import _self as display %}
+    <div class="user">
+        <div class="avatar">
+            <img width="128px" src="{{ user | illustration }}" class="img-responsive">
+        </div>
+        <div class="name">
+            <h3>
+                {% if user.complete_name_link is defined %}
+                    {{ user.complete_name_link }}
+                {% else %}
+                    {{ user | user_complete_name }}
+                {% endif %}
+            </h3>
+            <p class="email">{{ user.email }}</p>
+        </div>
+        {{ display.reporting_user_details(user) }}
+    </div>
+    {% endautoescape %}
+{% endmacro %}

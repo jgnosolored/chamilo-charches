@@ -1,0 +1,55 @@
+logout:
+    path: /logout
+
+authentication_token:
+    path: /api/authentication_token
+    methods: ['POST']
+
+legacy_main:
+    path: /main/{name}
+    defaults: {_controller: 'ChamiloCoreBundle:Legacy:classic'}
+    requirements:
+        name: .+
+
+legacy_plugin:
+    path: /plugin/{name}
+    defaults: {_controller: 'ChamiloCoreBundle:Legacy:plugin'}
+    requirements:
+        name: .+
+
+#courses_vue:
+#    path: /courses/{wildcard}
+#    controller: Chamilo\CoreBundle\Controller\IndexController::resources
+#    requirements:
+#        wildcard: .*
+
+#sessions_vue:
+#    path: /sessions/{wildcard}
+#    controller: Chamilo\CoreBundle\Controller\IndexController::resources
+#    requirements:
+#        wildcard: .*
+
+resources_vue:
+    path: /resources/{wildcard}
+    controller: Chamilo\CoreBundle\Controller\IndexController::indexAction
+    requirements:
+        wildcard: .*
+
+#liip_theme:
+#    resource: "@LiipThemeBundle/Resources/config/routing.xml"
+#    prefix: /theme
+
+# Redirects /url/ to /url always located at the end
+#remove_trailing_slash:
+#    path: /{url}
+#    defaults: {_controller: 'ChamiloCoreBundle:Redirecting:removeTrailingSlash'}
+#    requirements:
+#        url: .*/$
+#        _method: GET
+
+# web url shortcuts for legacy templates
+web_ajax:
+    path: main/inc/ajax/
+
+web_main:
+    path: main/

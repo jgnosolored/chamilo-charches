@@ -13,7 +13,7 @@ require __DIR__.'/../../main/inc/global.inc.php';
 api_protect_admin_script();
 
 // Course that users with no course will be registered:
-$courseCode = '';
+$courseId = '';
 
 $user = Database::get_main_table(TABLE_MAIN_USER);
 $userCourse = Database::get_main_table(TABLE_MAIN_COURSE_USER);
@@ -28,7 +28,11 @@ $students = Database::store_result($result);
 if (!empty($students)) {
     foreach ($students as $student) {
         var_dump($student['username'].'- '.$student['user_id']);
+<<<<<<< HEAD
         $result = CourseManager::subscribeUser($student['user_id'], $courseCode);
+=======
+        $result = CourseManager::subscribeUser($student['user_id'], $courseId);
+>>>>>>> master
         var_dump($result);
         echo '<br />';
     }

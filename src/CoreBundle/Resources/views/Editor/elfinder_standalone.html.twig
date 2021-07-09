@@ -1,0 +1,46 @@
+{% autoescape false %}
+
+{% set finderFolder = url('index') ~ 'assets/elfinder/dist/' %}
+<!-- elFinder CSS (REQUIRED) -->
+<link rel="stylesheet" type="text/css" media="screen" href="{{ finderFolder }}css/elfinder.min.css">
+<link rel="stylesheet" type="text/css" media="screen" href="{{ finderFolder }}css/theme.css">
+
+<!-- elFinder JS (REQUIRED) -->
+<script type="text/javascript" src="{{ finderFolder }}js/elfinder.min.js"></script>
+
+<!-- elFinder translation (OPTIONAL) -->
+<script type="text/javascript" src="{{ finderFolder }}js/i18n/elfinder.ru.js"></script>
+<style>
+/* Hide elfinder sidebar */
+.elfinder-navbar {
+    display: none !important;
+}
+</style>
+
+<script type="text/javascript" charset="utf-8">
+    // Helper function to get parameters from the query string.
+    function getUrlParam(paramName) {
+        var reParam = new RegExp('(?:[\?&]|&amp;)' + paramName + '=([^&]+)', 'i');
+        var match = window.location.search.match(reParam);
+        return (match && match.length > 1) ? match[1] : '';
+    }
+
+    $(function () {
+        var winheight = document.documentElement.clientHeight;
+        var funcNum = getUrlParam('CKEditorFuncNum');
+
+        var elf = $('#elfinder').elfinder({
+            url : '{{ url('index') }}editor/connector{{ course_condition }}',
+            getFileCallback : function(file) {
+                if (window.opener) {
+                    window.opener.CKEDITOR.tools.callFunction(funcNum, file.url);
+                    window.close();
+                }
+            },
+            resizable: false,
+            height : winheight
+        }).elfinder('instance');
+    });
+</script>
+<div id="elfinder"></div>
+{% endautoescape %}

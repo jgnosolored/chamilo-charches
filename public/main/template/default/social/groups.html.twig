@@ -1,0 +1,10 @@
+{% extends '@ChamiloCore/Layout/layout_one_col.html.twig' %}
+{% import '@ChamiloCore/Macros/box.html.twig' as macro %}
+
+{% block content %}
+{% autoescape false %}
+<div class="row">
+    {{ social_right_content }}
+</div>
+{% endautoescape %}
+{% endblock %}

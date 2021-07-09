@@ -1,0 +1,39 @@
+services:
+    _defaults:
+        autowire: true
+        public: true
+
+    chamilo_course.registry.settings_schema:
+        class: Sylius\Bundle\SettingsBundle\Registry\ServiceRegistry
+        arguments:
+            - Sylius\Bundle\SettingsBundle\Schema\SchemaInterface
+            - 'CourseSettings'
+
+    Chamilo\CourseBundle\Settings\SettingsCourseManager:
+        arguments:
+            - '@chamilo_course.registry.settings_schema'
+            - '@doctrine.orm.entity_manager'
+            - '@chamilo_course.repository.parameter'
+            - '@event_dispatcher'
+            - '@request_stack'
+
+    Chamilo\CourseBundle\Manager\SettingsFormFactory:
+        arguments:
+            - '@chamilo_course.registry.settings_schema'
+            - '@form.factory'
+        public: true
+
+    chamilo_course.repository.parameter:
+        class: Chamilo\CourseBundle\Repository\CCourseSettingRepository
+
+    Chamilo\CourseBundle\Repository\:
+        resource: '../../Repository/'
+        tags: ['doctrine.repository_service']
+        calls:
+            - setAuthorizationChecker: ['@security.authorization_checker']
+            - setRouter: ['@router']
+            - setSlugify: ['@cocur_slugify']
+            - setToolChain: ['@Chamilo\CoreBundle\ToolChain']
+            - setResourceNodeRepository: ['@Chamilo\CoreBundle\Repository\ResourceNodeRepository']
+            - setRequestStack: ['@request_stack']
+        exclude: '../../Repository/CCourseSettingRepository.php'

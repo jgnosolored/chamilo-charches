@@ -5,9 +5,15 @@ exit;
 
 require_once __DIR__ . '/../../main/inc/global.inc.php';
 
+<<<<<<< HEAD
 $sql = 'SELECT iid, c_id, question
         FROM c_quiz_question
         WHERE iid not in (SELECT question_id from c_quiz_rel_question)
+=======
+$sql = 'SELECT iid, c_id, question 
+        FROM c_quiz_question 
+        WHERE iid not in (SELECT question_id from c_quiz_rel_question) 
+>>>>>>> master
         ORDER BY iid';
 
 $result = Database::query($sql);
@@ -19,9 +25,17 @@ foreach ($data as $row) {
     $courseInfo = api_get_course_info_by_id($row['c_id']);
     $question = Question::read($row['iid'], $courseInfo);
     if (empty($question->exerciseList)) {
+<<<<<<< HEAD
         $question->delete();
     }
     echo 'Deleting question '.$counter.'/'.$totalQuestions.' -  #'.$row['iid'].
         ' - Course: '.$row['c_id'].' Title: '.$row['question'].PHP_EOL;
     $counter++;
 }
+=======
+        $question->delete(1);
+    }
+    echo 'Deleting question '.$counter.'/'.$totalQuestions.' -  #'.$row['iid'].PHP_EOL;
+    $counter++;
+}
+>>>>>>> master

@@ -1,0 +1,69 @@
+{% extends "@ChamiloCore/Layout/layout_one_col.html.twig" %}
+{% import '@ChamiloCore/Macros/box.html.twig' as display %}
+
+{% block content %}
+    {% autoescape false %}
+    {% if origin == 'learnpath' %}
+        <div style="height:15px">&nbsp;</div>
+    {% endif %}
+
+    {{ move_form }}
+
+    {% if forum_actions %}
+        {{ forum_actions }}
+    {% endif %}
+
+    {% for post in posts %}
+        {% set post_data %}
+            <div class="flex flex-row">
+                <div class="w-1/5">
+                    {% set image %}
+                        <img src="{{ post.author | illustration }}?w=80&h=80&fit=crop" />
+                    {% endset %}
+                    {{ display.avatar(image, 80) }}
+
+                    {{ post.post_date_to_display }}
+
+                    <div class='flex flex-row'>
+                        {{ post.tool_icons }}
+                    </div>
+
+                </div>
+                {% set highlight = '' %}
+                {% if post.current %}
+                    {% set highlight = 'alert alert-danger' %}
+                {% endif %}
+
+                {% set highlight_revision = '' %}
+                {% if post.is_a_revision %}
+                    {% set highlight_revision = 'forum_revision' %}
+                {% endif %}
+
+                <div class="w-4/5 {{ highlight }} ">
+                    {{ post.post_title }}
+
+                    {% if post.is_a_revision %}
+                       {{ 'ProposedRevision' | get_lang  }} {{ post.flag_revision }}
+                    {% endif %}
+
+                    <div class="{{ highlight_revision }} ">
+                        {{ post.post_data }}
+                    </div>
+
+                    {{ post.post_attachments }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-8 text-right">
+                    {{ post.post_buttons }}
+                </div>
+            </div>
+        {% endset %}
+
+        <div class="col-md-offset-{{ post.indent_cnt }} forum-post">
+            {{ display.panel('', post_data ) }}
+        </div>
+    {% endfor %}
+    {% endautoescape %}
+{% endblock %}
