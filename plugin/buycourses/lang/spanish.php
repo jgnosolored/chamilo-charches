@@ -1,6 +1,6 @@
 <?php
 $strings['plugin_title'] = "Venta de cursos";
-$strings['plugin_comment'] = "Vender cursos a través de PayPal directamente desde su portal Chamilo. La asociación Chamilo y los desarrolladores involucrados no pueden ser considerados responsables de cualquier inconveniente que se presente.";
+$strings['plugin_comment'] = "Vender cursos a través de PayPal directamente desde su portal Chamilo. La Asociación Chamilo y los desarrolladores involucrados no pueden ser considerados responsables de cualquier inconveniente que se presente.";
 $strings['show_main_menu_tab'] = "Mostrar pestaña en el menu principal";
 $strings['show_main_menu_tab_help'] = "En caso de no querer mostrar la pestaña, puede agregar el siguiente enlace a su portal Chamilo: %s";
 $strings['public_main_menu_tab'] = "Mostrar pestaña a usuarios sin login";
@@ -224,8 +224,9 @@ $strings['TaxNameCustom'] = "Nombre del impuesto";
 $strings['TaxNameExamples'] = "VAT, IVA, IGV, TVA, IV ...";
 $strings['ErrorUpdateFieldDB'] = "Error al actualizar los campos de la base de datos";
 $strings['tpv_redsys_enable'] = "Habilitar TPV RedSys";
-$strings['tpv_redsys_enable_help'] = "Para poder utilizar la modalidad de pago del TPV de RedSys es necesario descargar los ficheros de \"INTEGRACIÓN REST - API PHP\" en el siguiente enlace <a href='https://pagosonline.redsys.es/descargas.html'>web de RedSys</a> y ubicar el fichero el fichero <strong>apiRedSys.php</strong> en el directorio <em>plugin/buycourses/resources</em>.";
-$strings['NotFindRedsysFile'] = "No se encuentra en el directorio <em>plugin/buycourses/resources</em> el fichero <strong>apiRedsys.php</strong>";
+$strings['tpv_redsys_enable_help'] = "Para poder utilizar la modalidad de pago del TPV de RedSys es necesario descargar los ficheros de \"AYUDA
+GENERACIÓN HMAC_SHA256 - API PHP\" en el siguiente enlace <a href='https://pagosonline.redsys.es/descargas.html'>web de RedSys</a> y ubicar el fichero <strong>apiRedSys.php</strong> en el directorio <em>plugin/buycourses/resources/php</em>.";
+$strings['NotFindRedsysFile'] = "No se encuentra en el directorio <em>plugin/buycourses/resources/php</em> el fichero <strong>apiRedsys.php</strong>";
 $strings['TpvPayment'] = "Pago con tarjeta";
 $strings['TpvRedsysConfig'] = "Configuración TPV Redsys";
 $strings['DS_MERCHANT_MERCHANTCODE'] = "Número de comercio (FUC)";

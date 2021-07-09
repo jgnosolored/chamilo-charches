@@ -1,3 +1,7 @@
+#NSR
+/plugin/buycourses/resources/php/apiRedsys.php
+/plugin/buycourses/lang/spanish.php
+
 # Cache directories
 
 app/cache/*
