@@ -38,18 +38,16 @@ export default {
       const createForm = this.$refs.createForm;
       createForm.v$.$touch();
       if (!createForm.v$.$invalid) {
-
         let users = [];
         createForm.v$.item.$model.receivers.forEach(user => {
           // Send to inbox
-          users.push(user['@id']);
+          users.push({receiver: user['@id']});
         });
 
         createForm.v$.item.$model.sender = '/api/users/' + this.currentUser.id;
         createForm.v$.item.$model.receivers = users;
         createForm.v$.item.$model.msgType = 1;
         this.create(createForm.v$.item.$model);
-
       }
     },
     resetForm() {

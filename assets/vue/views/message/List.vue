@@ -26,6 +26,7 @@
           <v-icon icon="mdi-delete" />
         </v-btn>
 <!--        :disabled="!selectedItems || !selectedItems.length"-->
+
         <v-btn
             icon
             tile
@@ -83,8 +84,6 @@
               <v-list-item-title>Unread</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-
-
           <v-list-item
               v-for="(tag, i) in tags"
               :key="i"
@@ -137,13 +136,13 @@
               v-if="slotProps.data"
               @click="showHandler(slotProps.data)"
               class="cursor-pointer"
-              :class="[ true === slotProps.data.read ? 'font-normal': 'font-semibold']"
+              :class="{ 'font-semibold': index == 'inbox' && !slotProps.data.firstReceiver.read }"
           >
             {{ slotProps.data.sender.username }}
           </a>
+
         </template>
       </Column>
-
 
       <Column field="title" :header="$t('Title')" :sortable="false">
         <template #body="slotProps">
@@ -151,13 +150,16 @@
               v-if="slotProps.data"
               @click="showHandler(slotProps.data)"
               class="cursor-pointer"
-              v-bind:class="{ 'font-semibold': !slotProps.data.read }"
+              :class="{ 'font-semibold': index == 'inbox' &&  !slotProps.data.firstReceiver.read }"
           >
             {{ slotProps.data.title }}
           </a>
 
-          <div class="flex flex-row">
-            <v-chip v-for="tag in slotProps.data.tags" >
+          <div
+             v-if = "index == 'inbox' && slotProps.data.firstReceiver"
+             class="flex flex-row"
+          >
+            <v-chip v-for="tag in slotProps.data.firstReceiver.tags" >
               {{ tag.tag }}
             </v-chip>
           </div>
@@ -230,7 +232,7 @@
     </div>
     <template #footer>
       <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteItemDialog = false"/>
-      <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="deleteItemButton" />
+      <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="deleteItemButton(item)" />
     </template>
   </Dialog>
 
@@ -273,29 +275,26 @@ export default {
   components: {
     Toolbar,
     ActionCell,
-    ResourceFileIcon,
-    ResourceFileLink,
-    DocumentsFilterForm,
-    DataFilter
   },
   mixins: [ListMixin],
   setup() {
     const store = useStore();
+    const deleteItemDialog = ref(false);
+    const deleteMultipleDialog = ref(false);
+
     const filters = ref([]);
-    const filtersSent = ref([]);
+    const itemToDelete = ref([]);
+
     const user = store.getters["security/getUser"];
     const tags = ref([]);
     const title = ref('Inbox');
+    const index = ref('inbox');
 
-    filtersSent.value = {
-      msgType: 2,
-      sender: user.id
-    }
-
-    // inbox
-    filters.value = {
+    // Inbox
+    const inBoxFilter = {
       msgType: 1,
-      receivers: [user.id]
+      'receivers.receiver': user.id,
+      'order[sendDate]': 'desc',
     };
 
     // Get user tags.
@@ -309,55 +308,90 @@ export default {
     });
 
     function goToInbox() {
+      filters.value = inBoxFilter;
       title.value = 'Inbox';
-      filters.value = {
-        msgType: 1,
-        receivers: [user.id],
-      };
+      index.value = 'inbox';
       store.dispatch('message/resetList');
-      store.dispatch('message/fetchAll', filters.value);
+      store.dispatch('message/fetchAll', inBoxFilter);
     }
 
     function goToUnread() {
       title.value = 'Unread';
-      filters.value = {
+      index.value = 'unread';
+      const unReadFilter = {
         msgType: 1,
-        receivers: [user.id],
+        'receivers.receiver': user.id,
         read: false
       };
+      filters.value = unReadFilter;
       store.dispatch('message/resetList');
-      store.dispatch('message/fetchAll', filters.value);
+      store.dispatch('message/fetchAll', unReadFilter);
     }
 
     function goToSent() {
       title.value = 'Sent';
-      filters.value = {
-        msgType: 2,
+      index.value = 'sent';
+      const sentFilter = {
         sender: user.id
       };
+      filters.value = sentFilter;
       store.dispatch('message/resetList');
-      store.dispatch('message/fetchAll', filters.value);
+      store.dispatch('message/fetchAll', sentFilter);
     }
 
     function goToTag(tag) {
       title.value = tag.tag;
-      filters.value = {
+      index.value = 'tag';
+      const tagFilter = {
         msgType: 1,
-        receivers: [user.id],
-        tags: [tag]
+        'receivers.receiver': user.id,
+        'receivers.tags.tag': [tag.tag]
       };
+      filters.value = tagFilter;
       store.dispatch('message/resetList');
-      store.dispatch('message/fetchAll', filters.value);
+      store.dispatch('message/fetchAll', tagFilter);
     }
 
+    function deleteItemButton() {
+      console.log('deleteItemButton');
+      let myReceiver = {};
+      itemToDelete.value.receivers.forEach(receiver => {
+        if (receiver.receiver['@id'] === user['@id']) {
+          myReceiver = receiver;
+        }
+      });
+
+      console.log('deleteItem');
+      store.dispatch('messagereluser/del', myReceiver);
+      deleteItemDialog.value = false;
+
+      goToInbox();
+    }
+
+    function confirmDeleteItem(item) {
+      itemToDelete.value = item;
+      deleteItemDialog.value  = true;
+    }
+
+    function confirmDeleteMultiple() {
+      deleteMultipleDialog.value = true;
+    }
+
+    goToInbox();
+
     return {
+      deleteItemButton,
+      confirmDeleteMultiple,
       goToInbox,
       goToSent,
       goToUnread,
       goToTag,
+      confirmDeleteItem,
+      deleteItemDialog,
       tags,
       filters,
       title,
+      index,
     }
   },
   data() {
@@ -378,14 +412,9 @@ export default {
       selectedItems: [],
       // prime vue
       itemDialog: false,
-      deleteItemDialog: false,
-      deleteMultipleDialog: false,
       item: {},
       submitted: false,
     };
-  },
-  mounted() {
-    this.onUpdateOptions(this.options);
   },
   computed: {
     // From crud.js list function
@@ -476,13 +505,6 @@ export default {
       this.item = {...item};
       this.itemDialog = true;
     },
-    confirmDeleteItem(item) {
-      this.item = item;
-      this.deleteItemDialog = true;
-    },
-    confirmDeleteMultiple() {
-      this.deleteMultipleDialog = true;
-    },
     markAsReadMultiple() {
       console.log('markAsReadMultiple');
       this.selectedItems.forEach(message => {
@@ -515,14 +537,6 @@ export default {
       this.deleteMultipleDialog = false;
       this.selectedItems = null;
       //this.onUpdateOptions(this.options);
-    },
-    deleteItemButton() {
-      console.log('deleteItem');
-      this.deleteItem(this.item);
-      //this.items = this.items.filter(val => val.iid !== this.item.iid);
-      this.deleteItemDialog = false;
-      this.item = {};
-      this.onUpdateOptions(this.options);
     },
     onRowSelected(items) {
       this.selected = items
@@ -557,6 +571,9 @@ export default {
     }),
     ...mapActions('resourcenode', {
       findResourceNode: 'findResourceNode',
+    }),
+    ...mapActions('messagereluser', {
+      deleteMessageRelUser: 'del',
     }),
   }
 };

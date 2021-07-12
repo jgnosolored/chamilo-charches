@@ -9,12 +9,14 @@ namespace Chamilo\CoreBundle\Entity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Chamilo\CourseBundle\Entity\CGroup;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -88,12 +90,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 #[ApiFilter(OrderFilter::class, properties: ['title', 'sendDate'])]
 #[ApiFilter(SearchFilter::class, properties: [
-    'read' => 'exact',
-    'status' => 'exact',
     'msgType' => 'exact',
+    'status' => 'exact',
     'sender' => 'exact',
-    'tags' => 'exact',
-    'receivers' => 'exact',
+    'receivers.receiver' => 'exact',
+    'receivers.tags.tag' => 'exact',
 ])]
 class Message
 {
@@ -108,11 +109,9 @@ class Message
     // status
     public const MESSAGE_STATUS_DELETED = 3;
     public const MESSAGE_STATUS_DRAFT = 4;
-
     public const MESSAGE_STATUS_INVITATION_PENDING = 5;
     public const MESSAGE_STATUS_INVITATION_ACCEPTED = 6;
     public const MESSAGE_STATUS_INVITATION_DENIED = 7;
-
     public const MESSAGE_STATUS_PROMOTED = 13;
 
     /**
@@ -122,10 +121,10 @@ class Message
      */
     #[ApiProperty(identifier: true)]
     #[Groups(['message:read'])]
-    protected int $id;
+    protected ?int $id = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Chamilo\CoreBundle\Entity\User", inversedBy="sentMessages")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="sentMessages")
      * @ORM\JoinColumn(name="user_sender_id", referencedColumnName="id", nullable=false)
      */
     #[Assert\NotBlank]
@@ -133,16 +132,13 @@ class Message
     protected User $sender;
 
     /**
-     * @var Collection<int, User>|User[]
+     * @var Collection|MessageRelUser[]
      *
-     * @ORM\ManyToMany(
-     *     targetEntity="Chamilo\CoreBundle\Entity\User",
-     *     inversedBy="receivedMessages",
-     *     cascade={"persist"}
-     * )
-     * @ORM\JoinTable(name="message_rel_user")
+     * @ORM\OneToMany(targetEntity="MessageRelUser", mappedBy="message", cascade={"persist", "remove"})
      */
+    #[Assert\Valid]
     #[Groups(['message:read', 'message:write'])]
+    #[ApiSubresource]
     protected array | null | Collection $receivers;
 
     /**
@@ -172,20 +168,6 @@ class Message
     protected int $status;
 
     /**
-     * @ORM\Column(name="msg_read", type="boolean", nullable=false)
-     */
-    #[Assert\NotNull]
-    #[Groups(['message:read', 'message:write'])]
-    protected bool $read;
-
-    /**
-     * @ORM\Column(name="starred", type="boolean", nullable=false)
-     */
-    #[Assert\NotNull]
-    #[Groups(['message:read', 'message:write'])]
-    protected bool $starred;
-
-    /**
      * @ORM\Column(name="send_date", type="datetime", nullable=false)
      */
     #[Groups(['message:read'])]
@@ -204,6 +186,9 @@ class Message
     #[Assert\NotBlank]
     #[Groups(['message:read', 'message:write'])]
     protected string $content;
+
+    #[Groups(['message:read', 'message:write'])]
+    protected string $firstReceiver;
 
     /**
      * @ORM\ManyToOne(targetEntity="Chamilo\CourseBundle\Entity\CGroup")
@@ -248,15 +233,6 @@ class Message
      */
     protected Collection $likes;
 
-    /**
-     * @var Collection|MessageTag[]
-     *
-     * @ORM\ManyToMany(targetEntity="Chamilo\CoreBundle\Entity\MessageTag", inversedBy="messages", cascade={"persist"})
-     * @ORM\JoinTable(name="message_rel_tags")
-     */
-    #[Groups(['message:read', 'message:write'])]
-    protected Collection $tags;
-
     public function __construct()
     {
         $this->sendDate = new DateTime('now');
@@ -264,61 +240,67 @@ class Message
         $this->content = '';
         $this->attachments = new ArrayCollection();
         $this->children = new ArrayCollection();
-        $this->tags = new ArrayCollection();
         $this->likes = new ArrayCollection();
         $this->receivers = new ArrayCollection();
         $this->votes = 0;
         $this->status = 0;
-        $this->read = false;
-        $this->starred = false;
     }
 
     /**
-     * @return null|Collection|User[]
+     * @return null|Collection|MessageRelUser[]
      */
     public function getReceivers()
     {
         return $this->receivers;
     }
 
-    public function addReceiver(User $receiver): self
+    public function getFirstReceiver(): ?MessageRelUser
     {
-        if (!$this->receivers->contains($receiver)) {
-            $this->receivers->add($receiver);
+        if ($this->receivers->count() > 0) {
+            return $this->receivers->first();
         }
 
-        return $this;
+        return null;
     }
 
-    public function setReceivers($receivers): self
+    public function hasReceiver(User $receiver)
     {
-        $this->receivers = $receivers;
+        if ($this->receivers->count()) {
+            $criteria = Criteria::create()->where(
+                Criteria::expr()->eq('receiver', $receiver),
+            )->andWhere(
+                Criteria::expr()->eq('message', $this),
+            );
+
+            return $this->receivers->matching($criteria)->count() > 0;
+        }
+
+        return false;
+    }
+
+    public function addReceiver(User $receiver): self
+    {
+        $messageRelUser = (new MessageRelUser())
+            ->setReceiver($receiver)
+            ->setMessage($this)
+        ;
+        if (!$this->receivers->contains($messageRelUser)) {
+            $this->receivers->add($messageRelUser);
+        }
 
         return $this;
     }
 
     /**
-     * @return Collection|MessageTag[]
+     * @param Collection|MessageRelUser $receivers
      */
-    public function getTags()
+    public function setReceivers($receivers): self
     {
-        return $this->tags;
-    }
-
-    public function addTag(MessageTag $tag): self
-    {
-        if (!$this->tags->contains($tag)) {
-            $this->tags->add($tag);
+        /** @var MessageRelUser $receiver */
+        foreach ($receivers as $receiver) {
+            $receiver->setMessage($this);
         }
-
-        return $this;
-    }
-
-    public function removeTag(MessageTag $tag): self
-    {
-        if ($this->tags->contains($tag)) {
-            $this->tags->removeElement($tag);
-        }
+        $this->receivers = $receivers;
 
         return $this;
     }
@@ -490,30 +472,6 @@ class Message
     {
         $this->msgType = self::MESSAGE_TYPE_GROUP;
         $this->group = $group;
-
-        return $this;
-    }
-
-    public function isRead(): bool
-    {
-        return $this->read;
-    }
-
-    public function setRead(bool $read): self
-    {
-        $this->read = $read;
-
-        return $this;
-    }
-
-    public function isStarred(): bool
-    {
-        return $this->starred;
-    }
-
-    public function setStarred(bool $starred): self
-    {
-        $this->starred = $starred;
 
         return $this;
     }
