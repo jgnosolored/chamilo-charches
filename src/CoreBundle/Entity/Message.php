@@ -19,6 +19,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -237,6 +238,7 @@ class Message
     {
         $this->sendDate = new DateTime('now');
         $this->updateDate = $this->sendDate;
+        $this->msgType = self::MESSAGE_TYPE_INBOX;
         $this->content = '';
         $this->attachments = new ArrayCollection();
         $this->children = new ArrayCollection();
