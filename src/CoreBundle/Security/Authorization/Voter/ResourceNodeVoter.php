@@ -121,6 +121,10 @@ class ResourceNodeVoter extends Voter
         // @todo
         switch ($attribute) {
             case self::VIEW:
+                if ($resourceNode->isPublic()) {
+                    return true;
+                }
+                // no break
             case self::EDIT:
                 break;
         }
