@@ -1,8 +1,7 @@
 <?php
+/* For licensing terms, see /license.txt */
 
 declare(strict_types=1);
-
-/* For licensing terms, see /license.txt */
 
 namespace Chamilo\CoreBundle\Controller\Api;
 
@@ -12,14 +11,19 @@ use DateTime;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Request;
 
-class CreateCCalendarEventAction extends BaseResourceFileAction
+class UpdateCCalendarEventAction extends BaseResourceFileAction
 {
-    public function __invoke(Request $request, CCalendarEventRepository $repo, EntityManager $em): CCalendarEvent
-    {
-        $event = new CCalendarEvent();
-        $result = $this->handleCreateRequest($event, $repo, $request);
+    public function __invoke(
+        CCalendarEvent $calendarEvent,
+        Request $request,
+        CCalendarEventRepository $repo,
+        EntityManager $em
+    ): CCalendarEvent {
+        $this->handleUpdateRequest($calendarEvent, $repo, $request, $em);
 
-        $event
+        $result = json_decode($request->getContent(), true);
+
+        $calendarEvent
             ->setContent($result['content'] ?? '')
             ->setComment($result['comment'] ?? '')
             ->setColor($result['color'] ?? '')
@@ -29,6 +33,6 @@ class CreateCCalendarEventAction extends BaseResourceFileAction
             ->setCollective($result['collective'] ?? false)
         ;
 
-        return $event;
+        return $calendarEvent;
     }
 }

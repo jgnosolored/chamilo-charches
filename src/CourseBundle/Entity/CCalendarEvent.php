@@ -11,6 +11,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Chamilo\CoreBundle\Controller\Api\CreateCCalendarEventAction;
+use Chamilo\CoreBundle\Controller\Api\UpdateCCalendarEventAction;
 use Chamilo\CoreBundle\Entity\AbstractResource;
 use Chamilo\CoreBundle\Entity\ResourceInterface;
 use Chamilo\CoreBundle\Entity\Room;
@@ -47,6 +48,8 @@ use Symfony\Component\Validator\Constraints as Assert;
             'security' => "is_granted('VIEW', object)",
         ],
         'put' => [
+            'controller' => UpdateCCalendarEventAction::class,
+            'deserialize' => false,
             'security' => "is_granted('EDIT', object)",
         ],
         'delete' => [
@@ -60,7 +63,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         'groups' => ['calendar_event:write'],
     ],
     normalizationContext: [
-        'groups' => ['calendar_event:read'],
+        'groups' => ['calendar_event:read', 'resource_node:read'],
     ],
 )]
 
@@ -159,12 +162,19 @@ class CCalendarEvent extends AbstractResource implements ResourceInterface
      */
     protected Collection $attachments;
 
+    /**
+     * @ORM\Column(name="collective", type="boolean", options={"default": false}, nullable=false)
+     */
+    #[Groups(['calendar_event:read', 'calendar_event:write'])]
+    protected bool $collective = false;
+
     public function __construct()
     {
         $this->children = new ArrayCollection();
         $this->attachments = new ArrayCollection();
         $this->repeatEvents = new ArrayCollection();
         $this->allDay = false;
+        $this->collective = false;
     }
 
     public function __toString(): string
@@ -386,5 +396,17 @@ class CCalendarEvent extends AbstractResource implements ResourceInterface
     public function setResourceName(string $name): self
     {
         return $this->setTitle($name);
+    }
+
+    public function isCollective(): bool
+    {
+        return $this->collective;
+    }
+
+    public function setCollective(bool $collective): CCalendarEvent
+    {
+        $this->collective = $collective;
+
+        return $this;
     }
 }

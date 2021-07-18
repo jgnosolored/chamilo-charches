@@ -1,18 +1,18 @@
 <template>
   <div>
-    <FullCalendar ref="cal" :options="calendarOptions" />
+    <FullCalendar ref="cal" :options="calendarOptions"/>
 
-    <Loading :visible="isLoading" />
+    <Loading :visible="isLoading"/>
 
     <!-- Add form-->
     <q-dialog v-model="dialog" persistent>
       <q-card style="min-width: 500px">
         <q-card-section>
-          <div class="text-h6">Add event</div>
+          <div class="text-h6">{{ item['@id'] ? 'Edit event' : 'Add event' }}</div>
         </q-card-section>
 
         <q-card-section class="q-pt-none">
-<!--          <q-input dense v-model="address" autofocus @keyup.enter="dialog = false" />-->
+          <!--          <q-input dense v-model="address" autofocus @keyup.enter="dialog = false" />-->
 
           <!--              :errors="violations"-->
           <CCalendarEventForm
@@ -24,8 +24,8 @@
         </q-card-section>
 
         <q-card-actions align="right" class="text-primary">
-          <q-btn flat label="Cancel" v-close-popup />
-          <q-btn flat label="Add" @click="onCreateEventForm" />
+          <q-btn v-close-popup flat label="Cancel"/>
+          <q-btn :label="item['@id'] ? 'Edit' : 'Add'" flat @click="onCreateEventForm"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -34,14 +34,13 @@
     <q-dialog v-model="dialogShow" persistent>
       <q-card style="min-width: 500px">
         <q-card-section class="q-pt-none">
-          <h3>{{ item.title }}</h3>
-          <p>
-            {{ item.startDate }}
-          </p>
+          <div class="text-h6">{{ item.title }}</div>
+          <p>{{ item.startDate }}</p>
           <p>{{ item.endDate }}</p>
         </q-card-section>
         <q-card-actions align="right" class="text-primary">
-          <q-btn flat label="Close" v-close-popup />
+          <q-btn v-if="isEventEditable" color="primary" flat label="Edit" @click="dialog = true"/>
+          <q-btn v-close-popup flat label="Close"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -50,13 +49,13 @@
 
 <script>
 import {mapActions, mapGetters, useStore} from 'vuex';
-import { mapFields } from 'vuex-map-fields';
+import {mapFields} from 'vuex-map-fields';
 import Loading from '../../components/Loading.vue';
 import Toolbar from '../../components/Toolbar.vue';
-import {computed, ref, watch} from "vue";
+import {computed, ref} from "vue";
 
 //import '@fullcalendar/core/vdom' // solve problem with Vite
-import FullCalendar, {EventClickArg} from '@fullcalendar/vue3';
+import FullCalendar from '@fullcalendar/vue3';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -70,10 +69,10 @@ const servicePrefix = 'CCalendarEvent';
 export default {
   name: 'CCalendarEventList',
   components: {
-      CCalendarEventForm,
-      Loading,
-      Toolbar,
-      FullCalendar
+    CCalendarEventForm,
+    Loading,
+    Toolbar,
+    FullCalendar
   },
 
   mixins: [CreateMixin],
@@ -83,6 +82,7 @@ export default {
     const item = ref({});
     const dialog = ref(false);
     const dialogShow = ref(false);
+    const isEventEditable = ref(false);
 
     const store = useStore();
     const route = useRoute();
@@ -98,8 +98,11 @@ export default {
       customButtons: {
         addEvent: {
           text: 'Add event',
-          click: function() {
+          click: function () {
+            item.value = {};
             item.value['parentResourceNodeId'] = currentUser.value.resourceNode['id'];
+            item.value['collective'] = false;
+
             dialog.value = true;
           }
         }
@@ -114,29 +117,53 @@ export default {
       startParam: "startDate[after]",
       endParam: 'endDate[before]',
       selectable: true,
-      eventClick: function (EventClickArg) {
-        item.value['title'] = EventClickArg.event.title;
-        item.value['startDate'] = EventClickArg.event.startStr;
-        item.value['endDate'] = EventClickArg.event.endStr;
+      eventClick(EventClickArg) {
+        let event = EventClickArg.event;
+
+        item.value = {...event.extendedProps};
+
+        item.value['title'] = event.title;
+        item.value['startDate'] = event.startStr;
+        item.value['endDate'] = event.endStr;
+        item.value['parentResourceNodeId'] = event.extendedProps.resourceNode.creator.id;
+
+        isEventEditable.value = item.value['parentResourceNodeId'] === currentUser.value.resourceNode['id'];
+
+        if (!isEventEditable.value
+            && event.extendedProps.collective
+            && event.extendedProps.resourceLinkListFromEntity
+        ) {
+          const resourceLink = event.extendedProps.resourceLinkListFromEntity.find(linkEntity => linkEntity.user.id === currentUser.value.id);
+
+          if (resourceLink) {
+            isEventEditable.value = true;
+          }
+        }
 
         dialogShow.value = true;
       },
-      dateClick: function(info) {
-        item.value['allDay'] = info.allDay;
-        item.value['startDate'] = info.dateStr;
-        item.value['endDate'] = info.dateStr;
+      dateClick(info) {
+        item.value = {};
         item.value['parentResourceNodeId'] = currentUser.value.resourceNode['id'];
-        dialog.value = true;
-      },
-      select: function(info) {
+        item.value['collective'] = false;
         item.value['allDay'] = info.allDay;
         item.value['startDate'] = info.startStr;
         item.value['endDate'] = info.endStr;
-        item.value['parentResourceNodeId'] = currentUser.value.resourceNode['id'];
+
         dialog.value = true;
       },
-      events: function(info, successCallback, failureCallback) {
-        axios.get('/api/c_calendar_events',{
+      select(info) {
+        item.value = {};
+        item.value['parentResourceNodeId'] = currentUser.value.resourceNode['id'];
+        item.value['collective'] = false;
+        item.value['allDay'] = info.allDay;
+        item.value['startDate'] = info.startStr;
+        item.value['endDate'] = info.endStr;
+
+        dialog.value = true;
+      },
+      events(info, successCallback, failureCallback) {
+        axios.get('/api/c_calendar_events', {
           params: {
             'startDate[after]': info.startStr,
             'endDate[before]': info.endStr
@@ -145,17 +172,14 @@ export default {
           let data = response.data;
           let events = data['hydra:member'];
           successCallback(
-                Array.prototype.slice.call( // convert to array
-                    events
-                ).map(function(event) {
-                  return {
-                    title: event['title'],
-                    start: event['startDate'],
-                    end: event['endDate'],
-                  }
-                })
-            )
-          })
+              Array.prototype.slice.call(events)
+                  .map(event => ({
+                    ...event,
+                    start: event.startDate,
+                    end: event.endDate,
+                  }))
+          )
+        })
       },
     }
 
@@ -164,7 +188,7 @@ export default {
       calendarApi.refetchEvents();
     }
 
-    return {calendarOptions, dialog, item, dialogShow, reFetch};
+    return {calendarOptions, dialog, item, dialogShow, reFetch, isEventEditable};
   },
   computed: {
     ...mapFields('ccalendarevent', {
@@ -184,7 +208,14 @@ export default {
       const createForm = this.$refs.createForm;
       createForm.v$.$touch();
       if (!createForm.v$.$invalid) {
-        this.create(createForm.v$.item.$model);
+        let itemModel = createForm.v$.item.$model;
+
+        if (itemModel['@id']) {
+          this.updateItem(itemModel);
+        } else {
+          this.create(itemModel);
+        }
+
         this.reFetch();
         this.dialog = false;
       }
@@ -193,7 +224,8 @@ export default {
       create: 'create',
       deleteItem: 'del',
       reset: 'resetShow',
-      retrieve: 'loadWithQuery'
+      retrieve: 'loadWithQuery',
+      updateItem: 'update'
     }),
   },
   servicePrefix
